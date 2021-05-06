@@ -34,7 +34,9 @@ namespace FFmpeg.Loader
 
         public static string RegisterBinaries(params string[] searchPaths)
         {
-            var dir = FindLibraryDirectory("avcodec", searchPaths);
+            var dir = FindLibraryDirectory("avcodec", searchPaths)
+                ?? throw new DllNotFoundException();
+
             if (CurrentOS == OperatingSystem.Windows) {
                 NativeHelper.SetDllDirectory(dir);
             }
