@@ -1,0 +1,83 @@
+trigger:
+  branches:
+    include:
+    - master
+  tags:
+    include:
+    - v*
+
+stages:
+- stage: Build
+  pool:
+    name: Default
+
+  jobs:
+  - job: Versioning
+    displayName: Versioning
+    steps:
+    - task: UseGitVersion@5
+      displayName: GitVersion
+      inputs:
+        versionSpec: '5.x'
+        updateAssemblyInfo: false
+        additionalArguments: '/output BuildServer'
+
+    - task: InlinePowershell@1
+      displayName: 'Set variables'
+      name: Vars
+      env:
+        FullSemVer: $(UseGitVersion.GitVersion.FullSemVer)
+        NuGetVersion: $(UseGitVersion.GitVersion.NuGetVersion)
+      inputs:
+        Script: |
+          $DockerVersion = "$env:FullSemVer" -replace '[^\w-.]', '_'
+          Write-Host "##vso[task.setvariable variable=VersionForDocker;isOutput=true]$DockerVersion"
+          Write-Host "##vso[task.setvariable variable=VersionForNuGet;isOutput=true]$env:NuGetVersion"
+          If ("$env:NuGetVersion" -Match '^(\d+\.\d+\.\d+)$') {
+            Write-Host "##vso[build.addbuildtag]Stable"
+          }
+          Get-ChildItem Env:*GitVersion* | Sort-Object -Property Name
+
+  - job: Building
+    displayName: Building
+    dependsOn: Versioning
+    variables:
+      VersionForDocker: $[ dependencies.Versioning.outputs['Vars.VersionForDocker'] ]
+      VersionForNuGet: $[ dependencies.Versioning.outputs['Vars.VersionForNuGet'] ]
+    steps:
+    - task: NuGetAuthenticate@0
+
+    - task: DotNetCoreCLI@2
+      displayName: Restore
+      inputs:
+        command: 'restore'
+
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs:
+        command: 'build'
+        arguments: '--configuration $(buildConfiguration)'
+
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: 'test'
+        arguments: '--configuration $(buildConfiguration) --collect "Code Coverage"'
+        nobuild: true
+
+    - task: DotNetCoreCLI@2
+      displayName: Pack
+      inputs:
+        command: 'pack'
+        packagesToPack: '**/*.csproj;!**/*Tests/*.csproj'
+        nobuild: true
+        versioningScheme: 'byEnvVar'
+        versionEnvVar: 'VersionForNuGet'
+
+    # - task: DotNetCoreCLI@2
+    #   displayName: Push
+    #   inputs:
+    #     command: 'push'
+    #     packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    #     nuGetFeedType: 'external'
+    #     externalEndPoint: 'NuGet'
