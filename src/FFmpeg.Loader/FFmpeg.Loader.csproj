@@ -8,7 +8,8 @@
     <PackageProjectUrl>https://github.com/lethek/FFmpeg.Loader</PackageProjectUrl>
     <RepositoryUrl>https://github.com/lethek/FFmpeg.Loader</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageTags>ffmpeg</PackageTags>
+    <Description>Tooling to find and load FFmpeg libraries with the FFmpeg.AutoGen bindings.</Description>
   </PropertyGroup>
 
   <ItemGroup>

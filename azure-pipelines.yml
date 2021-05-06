@@ -6,78 +6,77 @@ trigger:
     include:
     - v*
 
-stages:
-- stage: Build
-  pool:
-    name: Default
+variables:
+- group: SMMX
 
-  jobs:
-  - job: Versioning
-    displayName: Versioning
-    steps:
-    - task: UseGitVersion@5
-      displayName: GitVersion
-      inputs:
-        versionSpec: '5.x'
-        updateAssemblyInfo: false
-        additionalArguments: '/output BuildServer'
+pool:
+  vmImage: 'ubuntu-latest'
 
-    - task: InlinePowershell@1
-      displayName: 'Set variables'
-      name: Vars
-      env:
-        FullSemVer: $(UseGitVersion.GitVersion.FullSemVer)
-        NuGetVersion: $(UseGitVersion.GitVersion.NuGetVersion)
-      inputs:
-        Script: |
-          $DockerVersion = "$env:FullSemVer" -replace '[^\w-.]', '_'
-          Write-Host "##vso[task.setvariable variable=VersionForDocker;isOutput=true]$DockerVersion"
-          Write-Host "##vso[task.setvariable variable=VersionForNuGet;isOutput=true]$env:NuGetVersion"
-          If ("$env:NuGetVersion" -Match '^(\d+\.\d+\.\d+)$') {
-            Write-Host "##vso[build.addbuildtag]Stable"
-          }
-          Get-ChildItem Env:*GitVersion* | Sort-Object -Property Name
+steps:
+- task: gitversion/setup@0
+  displayName: Setup GitVersion
+  inputs:
+    versionSpec: '5.x'
 
-  - job: Building
-    displayName: Building
-    dependsOn: Versioning
-    variables:
-      VersionForDocker: $[ dependencies.Versioning.outputs['Vars.VersionForDocker'] ]
-      VersionForNuGet: $[ dependencies.Versioning.outputs['Vars.VersionForNuGet'] ]
-    steps:
-    - task: NuGetAuthenticate@0
+- task: gitversion/execute@0
+  displayName: Execute GitVersion
+  inputs:
+    additionalArguments: '/output BuildServer'
 
-    - task: DotNetCoreCLI@2
-      displayName: Restore
-      inputs:
-        command: 'restore'
+- task: UseDotNet@2
+  displayName: Use .NET 5
+  inputs:
+    packageType: 'sdk'
+    version: '5.x'
 
-    - task: DotNetCoreCLI@2
-      displayName: Build
-      inputs:
-        command: 'build'
-        arguments: '--configuration $(buildConfiguration)'
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
 
-    - task: DotNetCoreCLI@2
-      displayName: Test
-      inputs:
-        command: 'test'
-        arguments: '--configuration $(buildConfiguration) --collect "Code Coverage"'
-        nobuild: true
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    command: 'build'
+    arguments: '--configuration $(buildConfiguration)'
 
-    - task: DotNetCoreCLI@2
-      displayName: Pack
-      inputs:
-        command: 'pack'
-        packagesToPack: '**/*.csproj;!**/*Tests/*.csproj'
-        nobuild: true
-        versioningScheme: 'byEnvVar'
-        versionEnvVar: 'VersionForNuGet'
+- task: DotNetCoreCLI@2
+  displayName: Test
+  inputs:
+    command: 'test'
+    arguments: '--configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
+    nobuild: true
 
-    # - task: DotNetCoreCLI@2
-    #   displayName: Push
-    #   inputs:
-    #     command: 'push'
-    #     packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-    #     nuGetFeedType: 'external'
-    #     externalEndPoint: 'NuGet'
+# - task: PublishCodeCoverageResults@1
+#   displayName: Publish code coverage report
+#   inputs:
+#     codeCoverageTool: 'Cobertura'
+#     summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'
+
+- task: DotNetCoreCLI@2
+  displayName: Pack
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj;!**/*Tests/*.csproj'
+    nobuild: true
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'GitVersion.NuGetVersion'
+
+- task: PublishPipelineArtifact@1
+  displayName: Publish artifacts
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    publishLocation: 'pipeline'
+
+- task: PowerShell@2
+  displayName: Push NuGet Package
+  inputs:
+    targetType: 'inline'
+    script: 'dotnet nuget push $(Build.ArtifactStagingDirectory)\*.nupkg --api-key $(NuGetApiKey) --source https://api.nuget.org/v3/index.json'
+
+- task: PowerShell@2
+  displayName: Push NuGet Symbols
+  inputs:
+    targetType: 'inline'
+    script: 'dotnet nuget push $(Build.ArtifactStagingDirectory)\*.snupkg --api-key $(NuGetApiKey) --source https://api.nuget.org/v3/index.json'
