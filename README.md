@@ -53,16 +53,16 @@ string FindLibraryDirectory(string name, params string[] searchPaths);
 This library searches for specific FFmpeg library versions. If your FFmpeg DLLs have different version numbers than expected, then they won't be found. The versions it looks for are pulled from the FFmpeg.AutoGen project's [`ffmpeg.LibraryVersionMap[]`](https://raw.githubusercontent.com/Ruslan-B/FFmpeg.AutoGen/master/FFmpeg.AutoGen/FFmpeg.libraries.g.cs) dictionary.
 
 At the time of writing this, FFmpeg.AutoGen currently specifies:
-|Library   |Version|
-|---       |---    |
-|avcodec   |58     |
-|avdevice  |58     |
-|avfilter  |7      |
-|avformat  |58     |
-|avutil    |56     |
-|postproc  |55     |
-|swresample|3      |
-|swscale   |5      |
+Library   |Version
+---       |---
+avcodec   |58
+avdevice  |58
+avfilter  |7
+avformat  |58
+avutil    |56
+postproc  |55
+swresample|3
+swscale   |5
 
 If any of your FFmpeg binaries are of a different version, you may need to explicitly install a newer/older version of FFmpeg.AutoGen into your project.
 

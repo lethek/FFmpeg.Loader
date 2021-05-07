@@ -32,6 +32,13 @@ namespace FFmpeg.Loader
         }
 
 
+        /// <summary>
+        /// Search a set of default paths and specified paths for FFmpeg libraries, relative to the current executable,
+        /// and set FFmpeg.AutoGen to load from there.
+        /// </summary>
+        /// <param name="searchPaths">A list of paths to search first before checking the default locations.</param>
+        /// <returns>FFmpeg's reported version number string. If the libraries fail to load for any reason, an exception
+        /// such as <see cref="DllNotFoundException"/> is thrown instead.</returns>
         public static string RegisterBinaries(params string[] searchPaths)
         {
             var dir = FindLibraryDirectory("avcodec", searchPaths)
@@ -46,16 +53,36 @@ namespace FFmpeg.Loader
         }
 
 
+        /// <summary>
+        /// Locates a specific FFmpeg library with a specific version.
+        /// </summary>
+        /// <param name="name">Name of the FFmpeg library (e.g. avcodec, swresample, etc.)</param>
+        /// <param name="version">The version of the library (e.g. 58)</param>
+        /// <param name="searchPaths">A list of paths to search first before checking the default locations.</param>
+        /// <returns>The full path to the library or null if none are found.</returns>
         public static string FindLibrary(string name, int version, params string[] searchPaths)
             => Binaries != null
                 ? Binaries.FindFFmpegLibrary(name, version, searchPaths)
                 : throw new PlatformNotSupportedException();
 
 
+        /// <summary>
+        /// Locates a specific FFmpeg library with a version provided by FFmpeg.AutoGen.
+        /// </summary>
+        /// <param name="name">Name of the FFmpeg library (e.g. avcodec, swresample, etc.)</param>
+        /// <param name="searchPaths">A list of paths to search first before checking the default locations.</param>
+        /// <returns>The full path to the library or null if none are found.</returns>
         public static string FindLibrary(string name, params string[] searchPaths)
             => FindLibrary(name, ffmpeg.LibraryVersionMap[name], searchPaths);
 
 
+        /// <summary>
+        /// Locates a folder containing a specific FFmpeg library with a specific version.
+        /// </summary>
+        /// <param name="name">Name of the FFmpeg library (e.g. avcodec, swresample, etc.)</param>
+        /// <param name="version">The version of the library (e.g. 58)</param>
+        /// <param name="searchPaths">A list of paths to search first before checking the default locations.</param>
+        /// <returns>The full path to the parent directory of the library or null if none are found.</returns>
         public static string FindLibraryDirectory(string name, int version, params string[] searchPaths)
         {
             var lib = Path.GetDirectoryName(FindLibrary(name, version, searchPaths));
@@ -63,6 +90,12 @@ namespace FFmpeg.Loader
         }
 
 
+        /// <summary>
+        /// Locates a folder containing a specific FFmpeg library with a version provided by FFmpeg.AutoGen.
+        /// </summary>
+        /// <param name="name">Name of the FFmpeg library (e.g. avcodec, swresample, etc.)</param>
+        /// <param name="searchPaths">A list of paths to search first before checking the default locations.</param>
+        /// <returns>The full path to the parent directory of the library or null if none are found.</returns>
         public static string FindLibraryDirectory(string name, params string[] searchPaths)
         {
             var lib = Path.GetDirectoryName(FindLibrary(name, searchPaths));
