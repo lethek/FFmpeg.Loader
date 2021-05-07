@@ -74,9 +74,3 @@ steps:
   inputs:
     targetType: 'inline'
     script: 'dotnet nuget push $(Build.ArtifactStagingDirectory)\*.nupkg --api-key $(NuGetApiKey) --source https://api.nuget.org/v3/index.json'
-
-- task: PowerShell@2
-  displayName: Push NuGet Symbols
-  inputs:
-    targetType: 'inline'
-    script: 'dotnet nuget push $(Build.ArtifactStagingDirectory)\*.snupkg --api-key $(NuGetApiKey) --source https://api.nuget.org/v3/index.json'
