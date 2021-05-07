@@ -10,6 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>ffmpeg</PackageTags>
     <Description>Tooling to find and load FFmpeg libraries with the FFmpeg.AutoGen bindings.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
