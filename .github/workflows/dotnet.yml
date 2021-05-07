@@ -1,0 +1,48 @@
+name: .NET
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ v* ]
+
+env:
+  buildConfiguration: Release
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: Personal
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.7
+      with:
+        versionSpec: 5.x
+    - name: Setup GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.7
+      with:
+        versionSpec: 5.x
+    - name: Execute GitVersion
+      uses: gittools/actions/gitversion/execute@v0.9.7
+      with:
+        additionalArguments: /output BuildServer
+    - name: Use .NET 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.x
+    - name: Restore
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration ${{ env.buildConfiguration }}
+    - name: Test
+      run: dotnet test --configuration ${{ env.buildConfiguration }} /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=${{ github.workspace }}/TestResults/Coverage/
+    - name: Pack
+      run: dotnet pack **/*.csproj;!**/*Tests/*.csproj
+    - name: Publish artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        path: ${{ github.workspace }}
+    - name: Push NuGet Package
+      run: dotnet nuget push ${{ github.workspace }}/*.nupkg --source ${{ secrets.NUGET_SOURCE }} --api-key ${{ secrets.NUGET_API_KEY }}
