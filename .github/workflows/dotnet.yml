@@ -43,10 +43,10 @@ jobs:
     - name: Test
       run: dotnet test --configuration ${{ env.buildConfiguration }} --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=${{ github.workspace }}/TestResults/Coverage/
     - name: Pack
-      run: dotnet pack /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }}
+      run: dotnet pack --no-build /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }} /o ${{ github.workspace }}/artifacts/
     - name: Publish artifacts
       uses: actions/upload-artifact@v2
       with:
-        path: ${{ github.workspace }}
+        path: ${{ github.workspace }}/artifacts/
     - name: Push NuGet Package
-      run: dotnet nuget push ${{ github.workspace }}/*.nupkg --source ${{ secrets.NUGET_SOURCE }} --api-key ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push ${{ github.workspace }}/artifacts/*.nupkg --source ${{ secrets.NUGET_SOURCE }} --api-key ${{ secrets.NUGET_API_KEY }}
