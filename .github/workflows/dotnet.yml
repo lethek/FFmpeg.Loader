@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment:
-      name: Personal
+      name: Public
     steps:
     - uses: actions/checkout@v2
       with:
@@ -48,5 +48,9 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         path: ${{ github.workspace }}/artifacts/
-    - name: Push NuGet Package
+    - name: Push NuGet Package (Pre-release)
+      if: ${{ steps.gitversion.outputs.nuGetPreReleaseTag != '' }}
+      run: dotnet nuget push ${{ github.workspace }}/artifacts/*.nupkg --source ${{ secrets.MYGET_SOURCE }} --api-key ${{ secrets.MYGET_API_KEY }}
+    - name: Push NuGet Package (Release)
+      if: ${{ steps.gitversion.outputs.nuGetPreReleaseTag == '' }}
       run: dotnet nuget push ${{ github.workspace }}/artifacts/*.nupkg --source ${{ secrets.NUGET_SOURCE }} --api-key ${{ secrets.NUGET_API_KEY }}
