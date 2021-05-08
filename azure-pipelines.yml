@@ -48,6 +48,7 @@ steps:
     arguments: '--configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
     nobuild: true
 
+# TODO: try to fix - Azure Pipelines or the Coverlet Collector seems to have trouble finding this report
 # - task: PublishCodeCoverageResults@1
 #   displayName: Publish code coverage report
 #   inputs:
@@ -69,8 +70,8 @@ steps:
     targetPath: '$(Build.ArtifactStagingDirectory)'
     publishLocation: 'pipeline'
 
-- task: PowerShell@2
-  displayName: Push NuGet Package
-  inputs:
-    targetType: 'inline'
-    script: 'dotnet nuget push $(Build.ArtifactStagingDirectory)\*.nupkg --api-key $(NuGetApiKey) --source https://api.nuget.org/v3/index.json'
+# - task: PowerShell@2
+#   displayName: Push NuGet Package
+#   inputs:
+#     targetType: 'inline'
+#     script: 'dotnet nuget push $(Build.ArtifactStagingDirectory)\*.nupkg --api-key $(NuGetApiKey) --source https://api.nuget.org/v3/index.json'
