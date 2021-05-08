@@ -28,6 +28,7 @@ jobs:
         versionSpec: 5.x
     - name: Execute GitVersion
       uses: gittools/actions/gitversion/execute@v0.9.7
+      id: gitversion
       with:
         additionalArguments: /output BuildServer
     - name: Use .NET 5
@@ -41,7 +42,7 @@ jobs:
     - name: Test
       run: dotnet test --configuration ${{ env.buildConfiguration }} /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=${{ github.workspace }}/TestResults/Coverage/
     - name: Pack
-      run: dotnet pack **/*.csproj;!**/*Tests/*.csproj
+      run: dotnet pack **/*.csproj;!**/*Tests/*.csproj /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }}
     - name: Publish artifacts
       uses: actions/upload-artifact@v2
       with:
