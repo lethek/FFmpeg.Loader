@@ -28,9 +28,9 @@ jobs:
         versionSpec: 5.x
     - name: Execute GitVersion
       uses: gittools/actions/gitversion/execute@v0.9.7
-      id: gitversion
       with:
-        additionalArguments: /output BuildServer
+        additionalArguments: /showConfig /output BuildServer
+        useConfigFile: true
     - name: Use .NET 5
       uses: actions/setup-dotnet@v1
       with:
@@ -38,11 +38,11 @@ jobs:
     - name: Restore
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration ${{ env.buildConfiguration }}
+      run: dotnet build --configuration ${{ env.buildConfiguration }} --no-restore
     - name: Test
-      run: dotnet test --configuration ${{ env.buildConfiguration }} /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=${{ github.workspace }}/TestResults/Coverage/
+      run: dotnet test --configuration ${{ env.buildConfiguration }} --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=${{ github.workspace }}/TestResults/Coverage/
     - name: Pack
-      run: dotnet pack **/*.csproj;!**/*Tests/*.csproj /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }}
+      run: dotnet pack **/*.csproj;!**/*Tests/*.csproj /p:PackageVersion=${{ env.GITVERSION_NUGETVERSION }}
     - name: Publish artifacts
       uses: actions/upload-artifact@v2
       with:
