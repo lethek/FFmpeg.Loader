@@ -14,20 +14,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FFmpeg.AutoGen" Version="4.4.0" />
-    <PackageReference Include="InternalsVisibleTo.MSBuild" Version="1.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.IO.Abstractions" Version="13.2.31" />
+    <InternalsVisibleTo Include="FFmpeg.Loader.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FFmpeg.AutoGen" Version="4.*" />
+    <PackageReference Include="System.IO.Abstractions" Version="17.0.21" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <InternalsVisibleToSuffix Include=".Tests" />
   </ItemGroup>
 
 </Project>

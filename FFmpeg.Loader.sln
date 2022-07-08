@@ -1,15 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.6.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{114B45AC-E390-446D-8AA4-F10C6077ECFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFmpeg.Loader", "src\FFmpeg.Loader\FFmpeg.Loader.csproj", "{8C756F4A-BDCA-4887-8BBD-FEF1B487A08C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFmpeg.Loader", "src\FFmpeg.Loader\FFmpeg.Loader.csproj", "{8C756F4A-BDCA-4887-8BBD-FEF1B487A08C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{23F76E13-88D2-4287-969E-76EC37182A01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFmpeg.Loader.Tests", "tests\FFmpeg.Loader.Tests\FFmpeg.Loader.Tests.csproj", "{8312CA61-71CA-46AC-A830-9E70D5FEE0F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFmpeg.Loader.Tests", "tests\FFmpeg.Loader.Tests\FFmpeg.Loader.Tests.csproj", "{8312CA61-71CA-46AC-A830-9E70D5FEE0F7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A46D3E95-FB75-4012-AB32-187CC945BA86}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,9 +27,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8C756F4A-BDCA-4887-8BBD-FEF1B487A08C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -49,8 +54,14 @@ Global
 		{8312CA61-71CA-46AC-A830-9E70D5FEE0F7}.Release|x86.ActiveCfg = Release|Any CPU
 		{8312CA61-71CA-46AC-A830-9E70D5FEE0F7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8C756F4A-BDCA-4887-8BBD-FEF1B487A08C} = {114B45AC-E390-446D-8AA4-F10C6077ECFE}
 		{8312CA61-71CA-46AC-A830-9E70D5FEE0F7} = {23F76E13-88D2-4287-969E-76EC37182A01}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {17DF19F8-3351-4970-98A3-E6117E2E87F4}
 	EndGlobalSection
 EndGlobal

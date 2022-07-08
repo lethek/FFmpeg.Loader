@@ -1,56 +1,75 @@
-name: .NET
+name: Build & Publish
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
     tags: [ v* ]
 
 env:
   buildConfiguration: Release
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: Public
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.9.7
-      with:
-        versionSpec: 5.x
+
     - name: Setup GitVersion
-      uses: gittools/actions/gitversion/setup@v0.9.7
+      uses: gittools/actions/gitversion/setup@v0.9.13
       with:
         versionSpec: 5.x
+
     - name: Execute GitVersion
-      uses: gittools/actions/gitversion/execute@v0.9.7
+      uses: gittools/actions/gitversion/execute@v0.9.13
       id: gitversion
       with:
         additionalArguments: /output BuildServer
         useConfigFile: true
-    - name: Use .NET 5
-      uses: actions/setup-dotnet@v1
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 5.x
+        dotnet-version: 6.x
+
     - name: Restore
       run: dotnet restore
+
     - name: Build
-      run: dotnet build --configuration ${{ env.buildConfiguration }} --no-restore
+      run: dotnet build -c ${{ env.buildConfiguration }} --no-restore -p:Version=$NUGETVER -p:FileVersion=$SEMVER -p:AssemblyVersion=$ASSEMBLYVER
+      env:
+        NUGETVER: ${{ steps.gitversion.outputs.nuGetVersion }}
+        SEMVER: ${{ steps.gitversion.outputs.assemblySemFileVer }}
+        ASSEMBLYVER: 1.0.0.0
+
     - name: Test
-      run: dotnet test --configuration ${{ env.buildConfiguration }} --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=${{ github.workspace }}/TestResults/Coverage/
+      run: dotnet test -c ${{ env.buildConfiguration }} --no-build -v normal --filter FullyQualifiedName!~IntegrationTests
+
     - name: Pack
-      run: dotnet pack --configuration ${{ env.buildConfiguration }} --no-build --output ${{ github.workspace }}/artifacts/ /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }}
-    - name: Publish artifacts
-      uses: actions/upload-artifact@v2
+      run: dotnet pack -c ${{ env.buildConfiguration }} -o "${{ github.workspace }}/artifacts/" -p:PackageVersion=$NUGETVER
+      env:
+        NUGETVER: ${{ steps.gitversion.outputs.nuGetVersion }}
+
+    - name: Upload
+      uses: actions/upload-artifact@v3
       with:
-        path: ${{ github.workspace }}/artifacts/
-    - name: Push NuGet Package (Pre-release)
+        name: nuget
+        path: |
+          ${{ github.workspace }}/artifacts/*.nupkg
+          ${{ github.workspace }}/artifacts/*.snupkg
+
+    - name: Push (Pre-release)
       if: ${{ steps.gitversion.outputs.nuGetPreReleaseTag != '' }}
-      run: dotnet nuget push ${{ github.workspace }}/artifacts/*.nupkg --source ${{ secrets.MYGET_SOURCE }} --api-key ${{ secrets.MYGET_API_KEY }}
-    - name: Push NuGet Package (Release)
+      run: dotnet nuget push "${{ github.workspace }}/artifacts/*.nupkg" -s $NUGET_SOURCE -k $NUGET_API_KEY --skip-duplicate
+      env:
+        NUGET_SOURCE: ${{ secrets.MYGET_SOURCE }}
+        NUGET_API_KEY: ${{ secrets.MYGET_API_KEY }}
+
+    - name: Push (Release)
       if: ${{ steps.gitversion.outputs.nuGetPreReleaseTag == '' }}
-      run: dotnet nuget push ${{ github.workspace }}/artifacts/*.nupkg --source ${{ secrets.NUGET_SOURCE }} --api-key ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push "${{ github.workspace }}/artifacts/*.nupkg" -s $NUGET_SOURCE -k $NUGET_API_KEY --skip-duplicate
+      env:
+        NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
