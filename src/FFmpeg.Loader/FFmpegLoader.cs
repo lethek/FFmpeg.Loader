@@ -1,119 +1,33 @@
-﻿using System;
-using System.IO;
-using System.Runtime.InteropServices;
-
-using FFmpeg.AutoGen;
-using FFmpeg.Loader.Locators;
+﻿using FFmpeg.Loader.Locators;
 
 
-namespace FFmpeg.Loader
+namespace FFmpeg.Loader;
+
+public static class FFmpegLoader
 {
-
-    public static class FFmpegLoader
-    {
-        static FFmpegLoader()
-        {
-            CurrentOS = GetCurrentOS();
-
-            switch (CurrentOS) {
-                case OperatingSystem.Windows:
-                    Binaries = new WindowsBinaries();
-                    break;
-                case OperatingSystem.Linux:
-                    Binaries = new LinuxBinaries();
-                    break;
-                case OperatingSystem.OSX:
-                    Binaries = new MacOsBinaries();
-                    break;
-                default:
-                    Binaries = null;
-                    break;
-            }
-        }
+    /// <summary>
+    /// Sets the initial list of search-locations: a predefined set of defaults based on the current operating system and relative to the specified <paramref name="rootDir"/>
+    /// directory (the directory containing the FFmpegLoader assembly if <paramref name="rootDir"/> is <see langword="null" />).
+    /// </summary>
+    /// <param name="rootDir">The root-directory to use when resolving default relative paths. E.g. typically the application's root directory for binaries.
+    /// If <see langword="null" /> then the directory which contains th FFmpegLoader assembly is used.</param>
+    /// <returns>A new instance of <see cref="FFmpegLoaderSearch"/> with the initial search-locations.
+    /// Call <see cref="FFmpegLoaderSearch.ThenSearchDefaults">ThenSearchDefaults</see> or <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see>
+    /// on that to add additional search locations.</returns>
+    /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
+    public static FFmpegLoaderSearch SearchDefaults(string rootDir = null)
+        => new(new[] { LocatorFactory.CreateDefaultForCurrentOS(rootDir) });
 
 
-        /// <summary>
-        /// Search a set of default paths and specified paths for FFmpeg libraries, relative to the current executable,
-        /// and set FFmpeg.AutoGen to load from there.
-        /// </summary>
-        /// <param name="searchPaths">A list of paths to search first before checking the default locations.</param>
-        /// <returns>FFmpeg's reported version number string. If the libraries fail to load for any reason, an exception
-        /// such as <see cref="DllNotFoundException"/> is thrown instead.</returns>
-        public static string RegisterBinaries(params string[] searchPaths)
-        {
-            var dir = FindLibraryDirectory("avcodec", searchPaths)
-                ?? throw new DllNotFoundException();
-
-            if (CurrentOS == OperatingSystem.Windows) {
-                NativeHelper.SetDllDirectory(dir);
-            }
-
-            ffmpeg.RootPath = dir;
-            return ffmpeg.av_version_info();
-        }
-
-
-        /// <summary>
-        /// Locates a specific FFmpeg library with a specific version.
-        /// </summary>
-        /// <param name="name">Name of the FFmpeg library (e.g. avcodec, swresample, etc.)</param>
-        /// <param name="version">The version of the library (e.g. 58)</param>
-        /// <param name="searchPaths">A list of paths to search first before checking the default locations.</param>
-        /// <returns>The full path to the library or null if none are found.</returns>
-        public static string FindLibrary(string name, int version, params string[] searchPaths)
-            => Binaries != null
-                ? Binaries.FindFFmpegLibrary(name, version, searchPaths)
-                : throw new PlatformNotSupportedException();
-
-
-        /// <summary>
-        /// Locates a specific FFmpeg library with a version provided by FFmpeg.AutoGen.
-        /// </summary>
-        /// <param name="name">Name of the FFmpeg library (e.g. avcodec, swresample, etc.)</param>
-        /// <param name="searchPaths">A list of paths to search first before checking the default locations.</param>
-        /// <returns>The full path to the library or null if none are found.</returns>
-        public static string FindLibrary(string name, params string[] searchPaths)
-            => FindLibrary(name, ffmpeg.LibraryVersionMap[name], searchPaths);
-
-
-        /// <summary>
-        /// Locates a folder containing a specific FFmpeg library with a specific version.
-        /// </summary>
-        /// <param name="name">Name of the FFmpeg library (e.g. avcodec, swresample, etc.)</param>
-        /// <param name="version">The version of the library (e.g. 58)</param>
-        /// <param name="searchPaths">A list of paths to search first before checking the default locations.</param>
-        /// <returns>The full path to the parent directory of the library or null if none are found.</returns>
-        public static string FindLibraryDirectory(string name, int version, params string[] searchPaths)
-        {
-            var lib = Path.GetDirectoryName(FindLibrary(name, version, searchPaths));
-            return lib != null ? Path.GetFullPath(lib) : null;
-        }
-
-
-        /// <summary>
-        /// Locates a folder containing a specific FFmpeg library with a version provided by FFmpeg.AutoGen.
-        /// </summary>
-        /// <param name="name">Name of the FFmpeg library (e.g. avcodec, swresample, etc.)</param>
-        /// <param name="searchPaths">A list of paths to search first before checking the default locations.</param>
-        /// <returns>The full path to the parent directory of the library or null if none are found.</returns>
-        public static string FindLibraryDirectory(string name, params string[] searchPaths)
-        {
-            var lib = Path.GetDirectoryName(FindLibrary(name, searchPaths));
-            return lib != null ? Path.GetFullPath(lib) : null;
-        }
-
-
-        private static OperatingSystem GetCurrentOS()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return OperatingSystem.Windows;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return OperatingSystem.Linux;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) return OperatingSystem.OSX;
-            return OperatingSystem.Other;
-        }
-
-
-        private static readonly OperatingSystem CurrentOS;
-        private static readonly BinariesBase Binaries;
-    }
-
+    /// <summary>
+    /// Sets the initial list of search-locations: a custom set of paths for the current operating system. Search paths are expected to be either absolute or relative
+    /// to the directory containing the FFmpegLoader assembly.
+    /// </summary>
+    /// <param name="searchPaths">Additional search-locations. Search paths are expected to be absolute or relative to the directory containing the FFmpegLoader assembly.</param>
+    /// <returns>A new instance of <see cref="FFmpegLoaderSearch"/> with the initial search-locations.
+    /// Call <see cref="FFmpegLoaderSearch.ThenSearchDefaults">ThenSearchDefaults</see> or <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see>
+    /// on that to add additional search locations.</returns>
+    /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
+    public static FFmpegLoaderSearch SearchPaths(params string[] searchPaths)
+        => new(new[] { LocatorFactory.CreateCustomForCurrentOS(null, searchPaths) });
 }

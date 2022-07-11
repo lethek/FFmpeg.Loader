@@ -1,10 +1,9 @@
-﻿namespace FFmpeg.Loader
+﻿namespace FFmpeg.Loader;
+
+internal enum OperatingSystem
 {
-    internal enum OperatingSystem
-    {
-        Windows,
-        Linux,
-        OSX,
-        Other
-    }
+    Windows,
+    Linux,
+    OSX,
+    Other
 }

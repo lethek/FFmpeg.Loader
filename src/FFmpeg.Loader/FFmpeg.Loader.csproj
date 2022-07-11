@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Michael Monsour</Authors>
-    <Copyright>Copyright © Michael Monsour 2021</Copyright>
+    <Copyright>Copyright © Michael Monsour 2021-2022</Copyright>
     <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/lethek/FFmpeg.Loader</PackageProjectUrl>
     <RepositoryUrl>https://github.com/lethek/FFmpeg.Loader</RepositoryUrl>
@@ -11,6 +11,7 @@
     <PackageTags>ffmpeg</PackageTags>
     <Description>Tooling to find and load FFmpeg libraries with the FFmpeg.AutoGen bindings.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="FFmpeg.AutoGen" Version="4.4.1.1" />
+    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
     <PackageReference Include="System.IO.Abstractions" Version="17.0.21" />
   </ItemGroup>
 
