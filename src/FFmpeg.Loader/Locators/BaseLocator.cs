@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Reflection;
 
 namespace FFmpeg.Loader.Locators;
@@ -32,6 +34,13 @@ internal abstract class BaseLocator
         //Couldn't find the library.
         return null;
     }
+
+
+    protected IEnumerable<string> FlattenPathList(IEnumerable<string> paths)
+        => paths.SelectMany(x => x.Split(PathSeparatorChars, StringSplitOptions.RemoveEmptyEntries));
+
+
+    protected abstract char[] PathSeparatorChars { get; }
 
 
     internal IFileSystem FileSystem { get; init; }
