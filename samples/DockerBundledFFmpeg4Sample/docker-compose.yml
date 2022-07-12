@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  dockersample:
+    image: ${DOCKER_REGISTRY-}docker-bundled-ffmpeg4-sample:dev
+    container_name: docker-bundled-ffmpeg4-sample
+    build:
+      context: ../..
+      dockerfile: samples/DockerBundledFFmpeg4Sample/Dockerfile
