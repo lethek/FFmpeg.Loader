@@ -4,26 +4,39 @@
 [![NuGet Stats](https://img.shields.io/nuget/v/FFmpeg.Loader.svg)](https://www.nuget.org/packages/FFmpeg.Loader)
 [![Build & Publish](https://github.com/lethek/FFmpeg.Loader/actions/workflows/dotnet.yml/badge.svg)](https://github.com/lethek/FFmpeg.Loader/actions/workflows/dotnet.yml)
 
-Tooling to find and load FFmpeg libraries with the [FFmpeg.AutoGen](https://github.com/Ruslan-B/FFmpeg.AutoGen) bindings.
+FFmpegLoader will find and load FFmpeg libaries with the [FFmpeg.AutoGen](https://github.com/Ruslan-B/FFmpeg.AutoGen) bindings. It provides a simple and customizable way of doing this, cross-platform.
 
-This library was designed for use with [FFmpeg.Native](https://github.com/quamotion/ffmpeg-win32) as a more flexible alternative to FFmpeg.Native's tooling for finding FFmpeg libs. However please note, FFmpeg.Native is unnecessary if FFmpeg libraries have been installed elsewhere (it's just a convenient method of packaging the binaries in your application): just point this project's FFmpegLoader at the appropriate directory if it can't find the binaries on its own.
+This library was designed for use with [FFmpeg.Native](https://github.com/quamotion/ffmpeg-win32) as a more flexible alternative to FFmpeg.Native's tooling for finding FFmpeg libs. However please note, FFmpeg.Native is unnecessary if FFmpeg libraries have been installed elsewhere (it's just a convenient method of distributing the binaries with your application): just point this project's FFmpegLoader at the appropriate directory if it can't find the binaries on its own.
 
 # Features
 
-* Searches for appropriate FFmpeg libraries in a number of locations relative to the current executable.
-* Can be configured to also first search a custom list of locations.
+* Searches for appropriate FFmpeg libraries in any number of customizable locations.
 * Registers the located binaries for use with [FFmpeg.AutoGen](https://github.com/Ruslan-B/FFmpeg.AutoGen).
-* Works around a restriction on some Windows systems which prevents a DLL library being loaded from a non-default location.
+* Works around a restriction on some Windows systems which prevents DLL libraries being loaded from non-default locations.
+
+# Setup
+
+Install the FFmpeg.Loader from [NuGet.org](https://www.nuget.org/packages/FFmpeg.Loader/) into your project using the following *dotnet* CLI:
+
+```
+dotnet add package FFmpeg.Loader
+```
+
+Or using the Package Manager Console with the following command:
+
+```
+PM> Install-Package FFmpeg.Loader
+```
 
 # Usage
 
 See the code samples below for basic usage of FFmpegLoader. If the libraries cannot be located, then a `DllNotFoundException` is thrown.
 
-The *default* paths that FFmpegLoader searches for FFmpeg libraries are the assembly's directory in your executing application, and several specific subdirectories relative to that dependent on the current OS and architecture. These default paths match the location that FFmpeg.Native installs to, e.g.:
-* .
+The *default* paths that FFmpegLoader searches for FFmpeg libraries are the assembly's directory in your executing application, and also several specific subdirectories relative to that, dependent on the current OS and architecture. Aside from the assembly directory, the subdirectories searched match the location that FFmpeg.Native installs to, i.e.:
 * .\runtimes\win7-x64\native\{name}-{version}.dll
+* .\runtimes\win7-x86\native\{name}-{version}.dll
 * ./runtimes/linux-x64/native/lib{name}.so.{version}
-* etc.
+* ./runtimes/osx-x64/native/lib{name}.{version}.dylib
 
 ```csharp
 using FFmpeg.Loader;
