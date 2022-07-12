@@ -16,7 +16,7 @@ This library was designed for use with [FFmpeg.Native](https://github.com/quamot
 
 # Setup
 
-Install the FFmpeg.Loader from [NuGet.org](https://www.nuget.org/packages/FFmpeg.Loader/) into your project using the following *dotnet* CLI:
+Install the **FFmpeg.Loader** package from [NuGet.org](https://www.nuget.org/packages/FFmpeg.Loader/) into your project using the following dotnet CLI:
 
 ```
 dotnet add package FFmpeg.Loader
@@ -27,6 +27,11 @@ Or using the Package Manager Console with the following command:
 ```
 PM> Install-Package FFmpeg.Loader
 ```
+
+**FFmpeg libraries are not included in this package.** You will need to either also include a distribution package like [FFmpeg.Native](https://github.com/quamotion/ffmpeg-win32), or install them externally. For example to install externally:
+* On Ubuntu or Debian: `sudo apt install ffmpeg`
+* On Mac OS-X: `brew install ffmpeg`
+* On Windows, download and extract a Windows build from the [official FFmpeg site](https://ffmpeg.org/download.html#build-windows)
 
 # Usage
 
@@ -109,4 +114,4 @@ If any of your FFmpeg binaries are of a different version, you may need to expli
 
 # Attribution
 
-This project contains some C# code based on, and modified, from the LGPL-3.0 licensed [FFmpeg.Native](https://github.com/quamotion/ffmpeg-win32) project.
+This project contains some C# code that was originally based on, and modified, from the LGPL-3.0 licensed [FFmpeg.Native](https://github.com/quamotion/ffmpeg-win32) project.
