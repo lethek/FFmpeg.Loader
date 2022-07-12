@@ -5,11 +5,11 @@ namespace FFmpeg.Loader.Locators;
 
 internal class DefaultWindowsLocator : CustomWindowsLocator
 {
-    internal DefaultWindowsLocator(string rootDir)
+    public DefaultWindowsLocator(string rootDir)
         : base(rootDir, DefaultPaths) { }
 
 
-    internal DefaultWindowsLocator(IFileSystem fileSystem, string rootDir)
+    public DefaultWindowsLocator(IFileSystem fileSystem, string rootDir)
         : base(fileSystem, rootDir, DefaultPaths) { }
 
 

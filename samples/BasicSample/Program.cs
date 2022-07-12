@@ -1,7 +1,7 @@
 ﻿using FFmpeg.Loader;
 
 try {
-    string version = FFmpegLoader.SearchDefaults().Load();
+    string version = FFmpegLoader.SearchDefaults().Load("asdf");
     Console.WriteLine($"Loaded FFmpeg v{version}");
 
 } catch (DllNotFoundException) {

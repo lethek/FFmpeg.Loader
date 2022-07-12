@@ -22,7 +22,7 @@ internal abstract class BaseLocator
     public abstract IFileInfo FindFFmpegLibrary(string name, int version);
 
 
-    internal IFileInfo FindLibrary(string fileName, IEnumerable<string> relativePaths)
+    protected IFileInfo SearchPathsForFile(string fileName, IEnumerable<string> relativePaths)
     {
         foreach (var relativePath in relativePaths) {
             var fi = FileSystem.FileInfo.FromFileName(FileSystem.Path.Combine(RootDir, relativePath, fileName));

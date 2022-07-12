@@ -18,7 +18,9 @@ public static class FFmpegLoader
     /// <see cref="FFmpegLoaderSearch.ThenSearchEnvironmentPaths">ThenSearchEnvironmentPaths</see> on that to add additional search locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
     public static FFmpegLoaderSearch SearchDefaults(string rootDir = null)
-        => new(new[] { LocatorFactory.CreateDefaultForCurrentOS(rootDir) });
+        => new(new[] {
+            LocatorFactory.CreateDefaultForCurrentOS(rootDir)
+        });
 
 
     /// <summary>
@@ -31,7 +33,9 @@ public static class FFmpegLoader
     /// <see cref="FFmpegLoaderSearch.ThenSearchEnvironmentPaths">ThenSearchEnvironmentPaths</see> on that to add additional search locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
     public static FFmpegLoaderSearch SearchPaths(params string[] searchPaths)
-        => new(new[] { LocatorFactory.CreateCustomForCurrentOS(null, searchPaths) });
+        => new(new[] {
+            LocatorFactory.CreateCustomForCurrentOS(null, searchPaths)
+        });
 
 
     /// <summary>
@@ -43,5 +47,7 @@ public static class FFmpegLoader
     /// <see cref="FFmpegLoaderSearch.ThenSearchEnvironmentPaths">ThenSearchEnvironmentPaths</see> on that to add additional search locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
     public static FFmpegLoaderSearch SearchEnvironmentPaths(string envVar = "PATH")
-        => new(new[] { LocatorFactory.CreateCustomForCurrentOS(null, new[] { Environment.GetEnvironmentVariable(envVar) }) });
+        => new(new[] {
+            LocatorFactory.CreateCustomForCurrentOS(null, new[] { Environment.GetEnvironmentVariable(envVar) })
+        });
 }

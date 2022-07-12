@@ -24,7 +24,9 @@ public record FFmpegLoaderSearch
     /// <returns>A new instance of <see cref="FFmpegLoaderSearch"/> with the additional search-locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
     public FFmpegLoaderSearch ThenSearchDefaults(string rootDir = null)
-        => new(Locators.Append(LocatorFactory.CreateDefaultForCurrentOS(rootDir)));
+        => this with {
+            Locators = Locators.Add(LocatorFactory.CreateDefaultForCurrentOS(rootDir))
+        };
 
 
     /// <summary>
@@ -35,7 +37,9 @@ public record FFmpegLoaderSearch
     /// <returns>A new instance of <see cref="FFmpegLoaderSearch"/> with the additional search-locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
     public FFmpegLoaderSearch ThenSearchPaths(params string[] searchPaths)
-        => new(Locators.Append(LocatorFactory.CreateCustomForCurrentOS(null, searchPaths)));
+        => this with {
+            Locators = Locators.Add(LocatorFactory.CreateCustomForCurrentOS(null, searchPaths))
+        };
 
 
     /// <summary>
@@ -47,7 +51,9 @@ public record FFmpegLoaderSearch
     /// <see cref="FFmpegLoaderSearch.ThenSearchEnvironmentPaths">ThenSearchEnvironmentPaths</see> on that to add additional search locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
     public FFmpegLoaderSearch ThenSearchEnvironmentPaths(string envVar = "PATH")
-        => new(Locators.Append(LocatorFactory.CreateCustomForCurrentOS(null, new[] { Environment.GetEnvironmentVariable(envVar) })));
+        => this with {
+            Locators = Locators.Add(LocatorFactory.CreateCustomForCurrentOS(null, new[] { Environment.GetEnvironmentVariable(envVar) }))
+        };
 
 
     /// <summary>
@@ -93,15 +99,16 @@ public record FFmpegLoaderSearch
 
 
     /// <summary>
-    /// Search the defined search-locations for FFmpeg libraries and set FFmpeg.AutoGen to load from there.
+    /// Search the defined search-locations for FFmpeg libraries and set FFmpeg.AutoGen to load from there. FFmpeg.AutoGen is queried for supported library version
+    /// numbers and only a library with a matching version will be loaded.
     /// </summary>
-    /// <param name="name">Name of an FFmpeg library (e.g. avutil, avcodec, swresample, etc.) to locate. If not provided, the default is "avutil" and the supported version number
-    /// is provided by FFmpeg.AutoGen.</param>
+    /// <param name="name">Name of an FFmpeg library to locate. If not provided, the default is "avutil". Valid values are: avcodec, avdevice, avfilter, avformat, avutil, postproc, swresample, swscale.</param>
     /// <returns>FFmpeg's reported version number string.</returns>
     /// <exception cref="DllNotFoundException">Thrown if the required FFmpeg library (default: avutil) could not be found in any of the specified search-locations.</exception>
+    /// <exception cref="KeyNotFoundException">Thrown if an unrecognized library name was provided.</exception>
     public string Load(string name = "avutil")
         => Load(name, ffmpeg.LibraryVersionMap[name]);
 
 
-    private ImmutableList<BaseLocator> Locators { get; init; }
+    private ImmutableList<BaseLocator> Locators { get; init; } = ImmutableList<BaseLocator>.Empty;
 }
