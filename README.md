@@ -35,7 +35,9 @@ PM> Install-Package FFmpeg.Loader
 
 # Usage
 
-See the code samples below for basic usage of FFmpegLoader. If the libraries cannot be located, then a `DllNotFoundException` is thrown.
+See the code samples below for basic usage of FFmpegLoader.
+
+The search is only performed when `Load()` or `Find()` are called. The Load method throws `DllNotFoundException` if it can't find the libraries. And the Find method returns `null` if it can't find them.
 
 The *default* paths that FFmpegLoader searches for FFmpeg libraries are the assembly's directory in your executing application, and also several specific subdirectories relative to that, dependent on the current OS and architecture. Aside from the assembly directory, the subdirectories searched match the location that FFmpeg.Native installs to, i.e.:
 * .\runtimes\win7-x64\native\{name}-{version}.dll
@@ -48,23 +50,23 @@ using FFmpeg.Loader;
 ```
 
 ```csharp
-//Search a set of default paths for FFmpeg libraries, relative to the FFmpeg.Loader assembly and then set FFmpeg.AutoGen to load the first matching FFmpeg binaries.
+//Search a set of default paths for FFmpeg libraries, relative to the FFmpeg.Loader assembly and then load the first matching binaries with FFmpeg.AutoGen.
 FFmpegLoader.SearchDefaults().Load();
 
 //Search the system's environment PATH for FFmpeg libraries.
 FFmpegLoader.SearchEnvironmentPaths().Load();
 
-//Search a set of paths for FFmpeg libraries, and then set FFmpeg.AutoGen to load the first matching FFmpeg binaries.
+//Search a set of paths for FFmpeg libraries, and then load the first matching binaries with FFmpeg.AutoGen.
 FFmpegLoader.SearchPaths("/usr/lib/x86_64-linux-gnu", "/usr/bin/ffmpeg").Load();
 
-//Calls can be chained.
+//Calls can be chained and searches are conducted in a fallback sequence. When the 1st match is found, no further searching is done.
 FFmpegLoader
 	.SearchDefaults()
 	.ThenSearchEnvironmentPaths()
 	.ThenSearchPaths("/usr/bin/ffmpeg")
 	.Load();
 
-//The following two examples are functionally identical and combines both of the approaches above.
+//The following two examples are functionally identical and combine both of the approaches above.
 //They first search a default set of paths relative to the FFmpeg.Loader assembly, and then search a list of manually specified paths.
 //Finally they set FFmpeg.AutoGen to load the first matching FFmpeg binaries.
 FFmpegLoader.SearchDefaults().ThenSearchPaths("/usr/lib/x86_64-linux-gnu", "/usr/bin/ffmpeg").Load();
@@ -90,7 +92,7 @@ FFmpegLoaderSearch ThenSearchDefaults(string rootDir = null);
 FFmpegLoaderSearch ThenSearchPaths(params string[] searchPaths);
 
 //Returns an instance with additional search-locations. This method can be chained as many times as necessary.
-//Paths are read from the specified envVar; the appropriate PATH separator for each OS is recognized and handled (":" on Linux & OSX, ";" on Windows)
+//Paths are read from the specified envVar; the appropriate PATH separator for each OS is recognized and handled (":" on Linux & OSX, ";" on Windows).
 FFmpegLoaderSearch ThenSearchEnvironmentPaths(string envVar = "PATH");
 
 //Locates a specific FFmpeg library with a specific version. Returns null if no matching library is found.
@@ -99,11 +101,13 @@ IFileInfo Find(string name, int version);
 //Locates a specific FFmpeg library with a version number provided by FFmpeg.AutoGen. Returns null if no matching library is found.
 IFileInfo Find(string name);
 
-//Search the defined search-locations for an FFmpeg library with a specific name and version and set FFmpeg.AutoGen to load from there.
+//Search the defined search-locations for an FFmpeg library with a specific name and version and loads it with FFmpeg.AutoGen.
+//Returns FFmpeg's self-reported version string (e.g. "4.4.2-0ubuntu0.22.04.1").
 //Throws DllNotFoundException if no matching library is found.
 string Load(string name, int version);
 
-//Search the defined search-locations for an FFmpeg library with a specific name (version provided by FFmpeg.AutoGen) and set FFmpeg.AutoGen to load from there.
+//Search the defined search-locations for an FFmpeg library with a specific name (version provided by FFmpeg.AutoGen) and loads it with FFmpeg.AutoGen.
+//Returns FFmpeg's self-reported version string (e.g. "4.4.2-0ubuntu0.22.04.1").
 //Throws DllNotFoundException if no matching library is found.
 string Load(string name = "avutil");
 ```
@@ -112,17 +116,31 @@ string Load(string name = "avutil");
 
 This library searches for specific FFmpeg library versions. If your FFmpeg DLLs have different version numbers than expected, then they won't be found. The versions it looks for are pulled from the FFmpeg.AutoGen project's [`ffmpeg.LibraryVersionMap[]`](https://raw.githubusercontent.com/Ruslan-B/FFmpeg.AutoGen/master/FFmpeg.AutoGen/FFmpeg.libraries.g.cs) dictionary.
 
-At the time of writing this, FFmpeg.AutoGen 4.x currently specifies:
-Library   |Version
----       |---
-avcodec   |58
-avdevice  |58
-avfilter  |7
-avformat  |58
-avutil    |56
-postproc  |55
-swresample|3
-swscale   |5
+FFmpeg.AutoGen 4.x currently expects to bind to these library versions:
+
+|Library   |Version|
+|----------|-------|
+|avcodec   |58     |
+|avdevice  |58     |
+|avfilter  |7      |
+|avformat  |58     |
+|avutil    |56     |
+|postproc  |55     |
+|swresample|3      |
+|swscale   |5      |
+
+And FFmpeg.AutoGen 5.x currently expects to bind to these library versions:
+
+|Library   |Version|
+|----------|-------|
+|avcodec   |59     |
+|avdevice  |59     |
+|avfilter  |8      |
+|avformat  |59     |
+|avutil    |57     |
+|postproc  |56     |
+|swresample|4      |
+|swscale   |6      |
 
 If any of your FFmpeg binaries are of a different version, you may need to explicitly install a newer/older version of FFmpeg.AutoGen into your project.
 
