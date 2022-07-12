@@ -51,8 +51,18 @@ using FFmpeg.Loader;
 //Search a set of default paths for FFmpeg libraries, relative to the FFmpeg.Loader assembly and then set FFmpeg.AutoGen to load the first matching FFmpeg binaries.
 FFmpegLoader.SearchDefaults().Load();
 
+//Search the system's environment PATH for FFmpeg libraries.
+FFmpegLoader.SearchEnvironmentPaths().Load();
+
 //Search a set of paths for FFmpeg libraries, and then set FFmpeg.AutoGen to load the first matching FFmpeg binaries.
 FFmpegLoader.SearchPaths("/usr/lib/x86_64-linux-gnu", "/usr/bin/ffmpeg").Load();
+
+//Calls can be chained.
+FFmpegLoader
+	.SearchDefaults()
+	.ThenSearchEnvironmentPaths()
+	.ThenSearchPaths("/usr/bin/ffmpeg")
+	.Load();
 
 //The following two examples are functionally identical and combines both of the approaches above.
 //They first search a default set of paths relative to the FFmpeg.Loader assembly, and then search a list of manually specified paths.
@@ -78,6 +88,10 @@ FFmpegLoaderSearch ThenSearchDefaults(string rootDir = null);
 //Returns an instance with additional search-locations. This method can be chained as many times as necessary.
 //Values provided in searchPaths are expected to be either absolute or relative to the directory containing the FFmpegLoader assembly.
 FFmpegLoaderSearch ThenSearchPaths(params string[] searchPaths);
+
+//Returns an instance with additional search-locations. This method can be chained as many times as necessary.
+//Paths are read from the specified envVar; the appropriate PATH separator for each OS is recognized and handled (":" on Linux & OSX, ";" on Windows)
+FFmpegLoaderSearch ThenSearchEnvironmentPaths(string envVar = "PATH");
 
 //Locates a specific FFmpeg library with a specific version. Returns null if no matching library is found.
 IFileInfo Find(string name, int version);
