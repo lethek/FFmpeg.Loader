@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{23F76E13
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFmpeg.Loader.Tests", "tests\FFmpeg.Loader.Tests\FFmpeg.Loader.Tests.csproj", "{8312CA61-71CA-46AC-A830-9E70D5FEE0F7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Solution Items", "!Solution Items", "{A46D3E95-FB75-4012-AB32-187CC945BA86}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "[Solution Items]", "[Solution Items]", "{A46D3E95-FB75-4012-AB32-187CC945BA86}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
@@ -20,15 +20,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Solution Items", "!Solutio
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{AED10084-9FE1-4DE4-BF20-0168D3579612}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demos", "demos", "{AED10084-9FE1-4DE4-BF20-0168D3579612}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicSample", "samples\BasicSample\BasicSample.csproj", "{25C7166A-4D2E-4A8F-AA8E-1CB110B35126}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicSample", "demos\BasicSample\BasicSample.csproj", "{25C7166A-4D2E-4A8F-AA8E-1CB110B35126}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerBundledFFmpeg4Sample", "samples\DockerBundledFFmpeg4Sample\DockerBundledFFmpeg4Sample.csproj", "{3F577A88-10E9-4987-8901-58B19A209F37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerBundledFFmpeg4Sample", "demos\DockerBundledFFmpeg4Sample\DockerBundledFFmpeg4Sample.csproj", "{3F577A88-10E9-4987-8901-58B19A209F37}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerExternalFFmpeg4Sample", "samples\DockerExternalFFmpeg4Sample\DockerExternalFFmpeg4Sample.csproj", "{72E53BB1-5013-4FBF-8E78-2DC784305E50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerExternalFFmpeg4Sample", "demos\DockerExternalFFmpeg4Sample\DockerExternalFFmpeg4Sample.csproj", "{72E53BB1-5013-4FBF-8E78-2DC784305E50}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerExternalFFmpeg5Sample", "samples\DockerExternalFFmpeg5Sample\DockerExternalFFmpeg5Sample.csproj", "{770F89B7-B545-4BEF-9187-DCD34EB3C3B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerExternalFFmpeg5Sample", "demos\DockerExternalFFmpeg5Sample\DockerExternalFFmpeg5Sample.csproj", "{770F89B7-B545-4BEF-9187-DCD34EB3C3B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
