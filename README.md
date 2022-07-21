@@ -4,7 +4,7 @@
 [![NuGet Stats](https://img.shields.io/nuget/v/FFmpeg.Loader.svg)](https://www.nuget.org/packages/FFmpeg.Loader)
 [![Build & Publish](https://github.com/lethek/FFmpeg.Loader/actions/workflows/dotnet.yml/badge.svg)](https://github.com/lethek/FFmpeg.Loader/actions/workflows/dotnet.yml)
 
-FFmpegLoader will find and load FFmpeg libaries with the [FFmpeg.AutoGen](https://github.com/Ruslan-B/FFmpeg.AutoGen) bindings. It provides a simple and customizable way of doing this, cross-platform.
+FFmpegLoader will find and load FFmpeg libaries with the [FFmpeg.AutoGen](https://github.com/Ruslan-B/FFmpeg.AutoGen) bindings. It's goal is to provide a simple and customizable way of doing this, cross-platform.
 
 This library was designed for use with [FFmpeg.Native](https://github.com/quamotion/ffmpeg-win32) as a more flexible alternative to FFmpeg.Native's tooling for finding FFmpeg libs. However please note, FFmpeg.Native is unnecessary if FFmpeg libraries have been installed elsewhere (it's just a convenient method of distributing the binaries with your application): just point this project's FFmpegLoader at the appropriate directory if it can't find the binaries on its own.
 
@@ -12,7 +12,7 @@ This library was designed for use with [FFmpeg.Native](https://github.com/quamot
 
 * Searches for appropriate FFmpeg libraries in any number of customizable locations.
 * Registers the located binaries for use with [FFmpeg.AutoGen](https://github.com/Ruslan-B/FFmpeg.AutoGen).
-* Works around a restriction on some Windows systems which prevents DLL libraries being loaded from non-default locations.
+* **Works around a restriction on some Windows systems which prevents DLL libraries being loaded from non-default locations.**
 
 # Setup
 
@@ -35,20 +35,24 @@ PM> Install-Package FFmpeg.Loader
 
 # Usage
 
-See the code samples below for basic usage of FFmpegLoader.
+See the [Code Samples](#code-samples) below for basic usage of FFmpegLoader.
+
+## Notes
 
 The search is only performed when `Load()` or `Find()` are called. The Load method throws `DllNotFoundException` if it can't find the libraries. And the Find method returns `null` if it can't find them.
 
-The default application paths that FFmpegLoader searches for FFmpeg libraries are the assembly's directory in your executing application, and also several specific subdirectories relative to that, dependent on the current OS and architecture. Aside from the assembly directory, the subdirectories searched match the location that FFmpeg.Native installs to, i.e.:
-* .\runtimes\win7-x64\native\{name}-{version}.dll
-* .\runtimes\win7-x86\native\{name}-{version}.dll
-* ./runtimes/linux-x64/native/lib{name}.so.{version}
-* ./runtimes/osx-x64/native/lib{name}.{version}.dylib
+The default application paths that `SearchApplication()` searches are the assembly's directory in your executing application, and also several specific subdirectories relative to that, dependent on the current OS and architecture. Aside from the assembly directory, these subdirectories searched match the location that FFmpeg.Native installs to, i.e.:
+* On Linux (x64): **./runtimes/linux-x64/native/lib{name}.so.{version}**
+* On Mac OS-X (x64): **./runtimes/osx-x64/native/lib{name}.{version}.dylib**
+* On Windows (x64): **.\runtimes\win7-x64\native\{name}-{version}.dll**
+* On Windows (x86): **.\runtimes\win7-x86\native\{name}-{version}.dll**
 
-The default system paths that FFmpegLoader searches for FFmpeg libraries depend on the current OS.
-* On Linux systems this will search: /usr/lib/x86_64-linux-gnu, /usr/lib/aarch64-linux-gnu and /usr/lib
-* On Mac OSX systems this will search: /usr/local/lib
-* On Windows systems this won't search anything because there is no default install location.
+The default system paths that `SearchSystem()` searches depend on the current OS.
+* On Linux systems this will search: **/usr/lib/x86_64-linux-gnu**, **/usr/lib/aarch64-linux-gnu** and **/usr/lib**
+* On Mac OS-X systems this will search: **/usr/local/lib**
+* On Windows systems this will search: **C:\ffmpeg\bin**
+
+## Code Samples
 
 ```csharp
 using FFmpeg.Loader;
@@ -65,27 +69,20 @@ FFmpegLoader.SearchSystem().Load();
 FFmpegLoader.SearchEnvironmentPaths().Load();
 
 //Search a set of specified paths for FFmpeg libraries and then load the first matching binaries.
-FFmpegLoader.SearchPaths("/usr/lib/x86_64-linux-gnu", "/usr/bin/ffmpeg").Load();
+FFmpegLoader.SearchPaths("/home/user/bin/ffmpeg", "/usr/bin/ffmpeg").Load();
 
 //Calls can be chained and searches are conducted in a fallback sequence. When the 1st match is found, no further searching is done.
 FFmpegLoader
 	.SearchApplication()
-	.ThenSearchEnvironmentPaths()
-	.ThenSearchPaths("/usr/bin/ffmpeg")
+	.ThenSearchEnvironmentPaths("FFMPEG_PATH")
 	.ThenSearchSystem()
 	.Load();
 
 //The following two examples are functionally identical and combine both of the approaches above.
 //They first search a default set of paths relative to the FFmpeg.Loader assembly, and then search a list of manually specified paths.
 //Finally they set FFmpeg.AutoGen to load the first matching FFmpeg binaries.
-FFmpegLoader.SearchApplication().ThenSearchPaths("/usr/lib/x86_64-linux-gnu", "/usr/bin/ffmpeg").Load();
-FFmpegLoader.SearchApplication().ThenSearchPaths("/usr/lib/x86_64-linux-gnu").ThenSearchPaths("/usr/bin/ffmpeg").Load();
-
-//The following two examples are functionally identical and search the same paths as above, but search the manually specified paths first
-//and then fall back on searching a set of default paths.
-//As above, they finally set FFmpeg.AutoGen to load the first matching FFmpeg binaries.
-FFmpegLoader.SearchPaths("/usr/lib/x86_64-linux-gnu", "/usr/bin/ffmpeg").ThenSearchApplication().Load();
-FFmpegLoader.SearchPaths("/usr/lib/x86_64-linux-gnu").ThenSearchPaths("/usr/bin/ffmpeg").ThenSearchApplication().Load();
+FFmpegLoader.SearchApplication().ThenSearchPaths(@"c:\ffmpeg", "/usr/bin/ffmpeg").Load();
+FFmpegLoader.SearchApplication().ThenSearchPaths(@"c:\ffmpeg").ThenSearchPaths("/usr/bin/ffmpeg").Load();
 ```
 
 After defining the initial search paths, there are several more methods and overloads you may find useful:
@@ -96,6 +93,12 @@ After defining the initial search paths, there are several more methods and over
 //If rootDir is null then the FFmpegLoader assembly folder is used for resolving relative paths.
 FFmpegLoaderSearch ThenSearchApplication(string rootDir = null);
 
+//Returns an instance with additional search-locations. This method can be chained as many times as necessary
+//(not that there's any point using it in your chain more than once).
+//Additional locations are a predefined set of defaults specific to the operating system.
+//If rootDir is null then the FFmpegLoader assembly folder is used for resolving relative paths.
+FFmpegLoaderSearch ThenSearchSystem();
+
 //Returns an instance with additional search-locations. This method can be chained as many times as necessary.
 //Values provided in searchPaths are expected to be either absolute or relative to the directory containing the FFmpegLoader assembly.
 FFmpegLoaderSearch ThenSearchPaths(params string[] searchPaths);
@@ -104,10 +107,10 @@ FFmpegLoaderSearch ThenSearchPaths(params string[] searchPaths);
 //Paths are read from the specified envVar; the appropriate PATH separator for each OS is recognized and handled (":" on Linux & OSX, ";" on Windows).
 FFmpegLoaderSearch ThenSearchEnvironmentPaths(string envVar = "PATH");
 
-//Locates a specific FFmpeg library with a specific version. Returns null if no matching library is found.
+//Locates a specific FFmpeg library with a specific version, but does not load it. Returns null if no matching library is found.
 IFileInfo Find(string name, int version);
 
-//Locates a specific FFmpeg library with a version number provided by FFmpeg.AutoGen. Returns null if no matching library is found.
+//Locates a specific FFmpeg library with a version number provided by FFmpeg.AutoGen, but does not load it. Returns null if no matching library is found.
 IFileInfo Find(string name);
 
 //Search the defined search-locations for an FFmpeg library with a specific name and version and loads it with FFmpeg.AutoGen.
@@ -155,4 +158,4 @@ If any of your FFmpeg binaries are of a different version, you may need to expli
 
 # Attribution
 
-This project contains some C# code that was originally based on, and modified, from the LGPL-3.0 licensed [FFmpeg.Native](https://github.com/quamotion/ffmpeg-win32) project.
+This project contains some C# code that was originally based on, and heavily modified, from the LGPL-3.0 licensed [FFmpeg.Native](https://github.com/quamotion/ffmpeg-win32) project.
