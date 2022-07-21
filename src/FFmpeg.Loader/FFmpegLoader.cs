@@ -14,12 +14,25 @@ public static class FFmpegLoader
     /// <param name="rootDir">The root-directory to use when resolving default relative paths. E.g. typically the application's root directory for binaries.
     /// If <see langword="null" /> then the directory which contains th FFmpegLoader assembly is used.</param>
     /// <returns>A new instance of <see cref="FFmpegLoaderSearch"/> with the initial search-locations.
-    /// Call <see cref="FFmpegLoaderSearch.ThenSearchDefaults">ThenSearchDefaults</see>, <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see> or
+    /// Call <see cref="FFmpegLoaderSearch.ThenSearchApplication">ThenSearchApplication</see>, <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see> or
     /// <see cref="FFmpegLoaderSearch.ThenSearchEnvironmentPaths">ThenSearchEnvironmentPaths</see> on that to add additional search locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
-    public static FFmpegLoaderSearch SearchDefaults(string rootDir = null)
+    public static FFmpegLoaderSearch SearchApplication(string rootDir = null)
         => new(new[] {
-            LocatorFactory.CreateDefaultForCurrentOS(rootDir)
+            LocatorFactory.CreateAppDefaultForCurrentOS(rootDir)
+        });
+
+
+    /// <summary>
+    /// Sets the initial list of search-locations: a predefined set of defaults based on the current operating system.
+    /// </summary>
+    /// <returns>A new instance of <see cref="FFmpegLoaderSearch"/> with the initial search-locations.
+    /// Call <see cref="FFmpegLoaderSearch.ThenSearchApplication">ThenSearchApplication</see>, <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see> or
+    /// <see cref="FFmpegLoaderSearch.ThenSearchEnvironmentPaths">ThenSearchEnvironmentPaths</see> on that to add additional search locations.</returns>
+    /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
+    public static FFmpegLoaderSearch SearchSystem()
+        => new(new[] {
+            LocatorFactory.CreateSystemDefaultForCurrentOS()
         });
 
 
@@ -29,7 +42,7 @@ public static class FFmpegLoader
     /// </summary>
     /// <param name="searchPaths">Additional search-locations. Search paths are expected to be absolute or relative to the directory containing the FFmpegLoader assembly.</param>
     /// <returns>A new instance of <see cref="FFmpegLoaderSearch"/> with the initial search-locations.
-    /// Call <see cref="FFmpegLoaderSearch.ThenSearchDefaults">ThenSearchDefaults</see>, <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see> or
+    /// Call <see cref="FFmpegLoaderSearch.ThenSearchApplication">ThenSearchApplication</see>, <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see> or
     /// <see cref="FFmpegLoaderSearch.ThenSearchEnvironmentPaths">ThenSearchEnvironmentPaths</see> on that to add additional search locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
     public static FFmpegLoaderSearch SearchPaths(params string[] searchPaths)
@@ -43,7 +56,7 @@ public static class FFmpegLoader
     /// </summary>
     /// <param name="envVar">Name of the environment variable to pull search paths from. The default is the standard PATH variable.</param>
     /// <returns>A new instance of <see cref="FFmpegLoaderSearch"/> with the initial search-locations.
-    /// Call <see cref="FFmpegLoaderSearch.ThenSearchDefaults">ThenSearchDefaults</see>, <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see> or
+    /// Call <see cref="FFmpegLoaderSearch.ThenSearchApplication">ThenSearchApplication</see>, <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see> or
     /// <see cref="FFmpegLoaderSearch.ThenSearchEnvironmentPaths">ThenSearchEnvironmentPaths</see> on that to add additional search locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
     public static FFmpegLoaderSearch SearchEnvironmentPaths(string envVar = "PATH")

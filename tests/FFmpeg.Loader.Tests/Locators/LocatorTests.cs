@@ -32,7 +32,7 @@ namespace FFmpeg.Loader.Tests.Locators
 
             var runtime = Environment.Is64BitProcess ? "win7-x64" : "win7-x86";
 
-            var locator = new DefaultWindowsLocator(fileSystem, _assemblyDir);
+            var locator = new AppDefaultWindowsLocator(fileSystem, _assemblyDir);
 
             Assert.Equal(
                 Path.GetFullPath(Path.Combine(_assemblyDir, "runtimes", runtime, "native", "avutil-56.dll")),
@@ -51,7 +51,7 @@ namespace FFmpeg.Loader.Tests.Locators
                 }
             );
 
-            var locator = new DefaultWindowsLocator(fileSystem, _assemblyDir);
+            var locator = new AppDefaultWindowsLocator(fileSystem, _assemblyDir);
 
             Assert.Equal(
                 Path.GetFullPath(Path.Combine(_assemblyDir, "avutil-56.dll")), 
@@ -72,7 +72,7 @@ namespace FFmpeg.Loader.Tests.Locators
 
             var runtime = Environment.Is64BitProcess ? "win7-x64" : "win7-x86";
 
-            var locator = new DefaultWindowsLocator(fileSystem, root);
+            var locator = new AppDefaultWindowsLocator(fileSystem, root);
 
             Assert.Equal(
                 fileSystem.Path.GetFullPath(fileSystem.Path.Combine(root, "runtimes", runtime, "native", "avutil-56.dll")),
@@ -90,7 +90,7 @@ namespace FFmpeg.Loader.Tests.Locators
             fileSystem.AddFile(fileSystem.Path.Combine(root, "libavutil.so.56"), new("libavutil.so.56"));
             fileSystem.AddFile(fileSystem.Path.Combine(root, "libavutil.56.dylib"), new("libavutil.56.dylib"));
 
-            var locator = new DefaultWindowsLocator(fileSystem, root);
+            var locator = new AppDefaultWindowsLocator(fileSystem, root);
 
             Assert.Equal(
                 fileSystem.Path.GetFullPath(fileSystem.Path.Combine(root, "avutil-56.dll")),
@@ -110,7 +110,7 @@ namespace FFmpeg.Loader.Tests.Locators
                 }
             );
 
-            var locator = new DefaultLinuxLocator(fileSystem, _assemblyDir);
+            var locator = new AppDefaultLinuxLocator(fileSystem, _assemblyDir);
 
             Assert.Equal(
                 Path.GetFullPath(Path.Combine(_assemblyDir, "runtimes", "linux-x64", "native", "libavutil.so.56")),
@@ -129,7 +129,7 @@ namespace FFmpeg.Loader.Tests.Locators
                 }
             );
 
-            var locator = new DefaultLinuxLocator(fileSystem, _assemblyDir);
+            var locator = new AppDefaultLinuxLocator(fileSystem, _assemblyDir);
 
             Assert.Equal(
                 Path.GetFullPath(Path.Combine(_assemblyDir, "libavutil.so.56")),
@@ -149,7 +149,7 @@ namespace FFmpeg.Loader.Tests.Locators
             fileSystem.AddFile(fileSystem.Path.Combine(root, "runtimes", "linux-x64", "native", "libavutil.so.56"), new("libavutil.so.56"));
             fileSystem.AddFile(fileSystem.Path.Combine(root, "runtimes", "osx-x64", "native", "libavutil.56.dylib"), new("libavutil.56.dylib"));
 
-            var locator = new DefaultLinuxLocator(fileSystem, root);
+            var locator = new AppDefaultLinuxLocator(fileSystem, root);
 
             Assert.Equal(
                 Path.GetFullPath(Path.Combine(root, "runtimes", "linux-x64", "native", "libavutil.so.56")),
@@ -167,7 +167,7 @@ namespace FFmpeg.Loader.Tests.Locators
             fileSystem.AddFile(fileSystem.Path.Combine(root, "libavutil.so.56"), new("libavutil.so.56"));
             fileSystem.AddFile(fileSystem.Path.Combine(root, "libavutil.56.dylib"), new("libavutil.56.dylib"));
 
-            var locator = new DefaultLinuxLocator(fileSystem, root);
+            var locator = new AppDefaultLinuxLocator(fileSystem, root);
 
             Assert.Equal(
                 Path.GetFullPath(Path.Combine(root, "libavutil.so.56")),
@@ -187,7 +187,7 @@ namespace FFmpeg.Loader.Tests.Locators
                 }
             );
 
-            var locator = new DefaultMacLocator(fileSystem, _assemblyDir);
+            var locator = new AppDefaultMacLocator(fileSystem, _assemblyDir);
 
             Assert.Equal(
                 Path.GetFullPath(Path.Combine(_assemblyDir, "runtimes", "osx-x64", "native", "libavutil.56.dylib")),
@@ -206,7 +206,7 @@ namespace FFmpeg.Loader.Tests.Locators
                 }
             );
 
-            var locator = new DefaultMacLocator(fileSystem, _assemblyDir);
+            var locator = new AppDefaultMacLocator(fileSystem, _assemblyDir);
 
             Assert.Equal(
                 Path.GetFullPath(Path.Combine(_assemblyDir, "libavutil.56.dylib")),
@@ -225,7 +225,7 @@ namespace FFmpeg.Loader.Tests.Locators
             fileSystem.AddFile(fileSystem.Path.Combine(root, "runtimes", "linux-x64", "native", "libavutil.so.56"), new("libavutil.so.56"));
             fileSystem.AddFile(fileSystem.Path.Combine(root, "runtimes", "osx-x64", "native", "libavutil.56.dylib"), new("libavutil.56.dylib"));
 
-            var locator = new DefaultMacLocator(fileSystem, root);
+            var locator = new AppDefaultMacLocator(fileSystem, root);
 
             Assert.Equal(
                 Path.GetFullPath(Path.Combine(root, "runtimes", "osx-x64", "native", "libavutil.56.dylib")),
@@ -243,7 +243,7 @@ namespace FFmpeg.Loader.Tests.Locators
             fileSystem.AddFile(fileSystem.Path.Combine(root, "libavutil.so.56"), new("libavutil.so.56"));
             fileSystem.AddFile(fileSystem.Path.Combine(root, "libavutil.56.dylib"), new("libavutil.56.dylib"));
 
-            var locator = new DefaultMacLocator(fileSystem, root);
+            var locator = new AppDefaultMacLocator(fileSystem, root);
 
             Assert.Equal(
                 Path.GetFullPath(Path.Combine(root, "libavutil.56.dylib")),

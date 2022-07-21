@@ -1,7 +1,7 @@
 ﻿using FFmpeg.Loader;
 
 try {
-    string version = FFmpegLoader.SearchDefaults().Load();
+    string version = FFmpegLoader.SearchApplication().Load();
 
     Console.WriteLine($"Loaded FFmpeg v{version}");
 

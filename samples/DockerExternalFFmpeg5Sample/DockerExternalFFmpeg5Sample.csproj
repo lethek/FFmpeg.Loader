@@ -12,8 +12,11 @@
 
   <ItemGroup>
     <PackageReference Include="FFmpeg.AutoGen" Version="5.0.0" />
-    <PackageReference Include="FFmpeg.Loader" Version="2.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.16.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FFmpeg.Loader\FFmpeg.Loader.csproj" />
   </ItemGroup>
 
 </Project>

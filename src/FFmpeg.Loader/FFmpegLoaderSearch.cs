@@ -23,9 +23,20 @@ public record FFmpegLoaderSearch
     /// If <see langword="null" /> then the directory which contains th FFmpegLoader assembly is used.</param>
     /// <returns>A new instance of <see cref="FFmpegLoaderSearch"/> with the additional search-locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
-    public FFmpegLoaderSearch ThenSearchDefaults(string rootDir = null)
+    public FFmpegLoaderSearch ThenSearchApplication(string rootDir = null)
         => this with {
-            Locators = Locators.Add(LocatorFactory.CreateDefaultForCurrentOS(rootDir))
+            Locators = Locators.Add(LocatorFactory.CreateAppDefaultForCurrentOS(rootDir))
+        };
+
+
+    /// <summary>
+    /// Add to the list of search-locations: a predefined set of defaults based on the current operating system.
+    /// </summary>
+    /// <returns>A new instance of <see cref="FFmpegLoaderSearch"/> with the initial search-locations.</returns>
+    /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
+    public FFmpegLoaderSearch ThenSearchSystem()
+        => this with {
+            Locators = Locators.Add(LocatorFactory.CreateSystemDefaultForCurrentOS())
         };
 
 
@@ -47,7 +58,7 @@ public record FFmpegLoaderSearch
     /// </summary>
     /// <param name="envVar">Name of the environment variable to pull search paths from. The default is the standard PATH variable.</param>
     /// <returns>A new instance of <see cref="FFmpegLoaderSearch"/> with the initial search-locations.
-    /// Call <see cref="FFmpegLoaderSearch.ThenSearchDefaults">ThenSearchDefaults</see>, <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see> or
+    /// Call <see cref="ThenSearchApplication">ThenSearchApplication</see>, <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see> or
     /// <see cref="FFmpegLoaderSearch.ThenSearchEnvironmentPaths">ThenSearchEnvironmentPaths</see> on that to add additional search locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
     public FFmpegLoaderSearch ThenSearchEnvironmentPaths(string envVar = "PATH")

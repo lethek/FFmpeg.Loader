@@ -2,13 +2,13 @@
 
 namespace FFmpeg.Loader.Locators;
 
-internal class DefaultMacLocator : CustomMacLocator
+internal class AppDefaultMacLocator : CustomMacLocator
 {
-    public DefaultMacLocator(string rootDir)
+    public AppDefaultMacLocator(string rootDir)
         : base(rootDir, DefaultPaths) { }
 
 
-    public DefaultMacLocator(IFileSystem fileSystem, string rootDir)
+    public AppDefaultMacLocator(IFileSystem fileSystem, string rootDir)
         : base(fileSystem, rootDir, DefaultPaths) { }
 
 

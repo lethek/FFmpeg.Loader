@@ -19,11 +19,20 @@ internal static class LocatorFactory
         };
 
 
-    internal static BaseLocator CreateDefaultForCurrentOS(string rootDir)
+    internal static BaseLocator CreateAppDefaultForCurrentOS(string rootDir)
         => CurrentOS switch {
-            OperatingSystem.Windows => new DefaultWindowsLocator(rootDir),
-            OperatingSystem.Linux => new DefaultLinuxLocator(rootDir),
-            OperatingSystem.OSX => new DefaultMacLocator(rootDir),
+            OperatingSystem.Windows => new AppDefaultWindowsLocator(rootDir),
+            OperatingSystem.Linux => new AppDefaultLinuxLocator(rootDir),
+            OperatingSystem.OSX => new AppDefaultMacLocator(rootDir),
+            _ => throw new PlatformNotSupportedException()
+        };
+
+
+    internal static BaseLocator CreateSystemDefaultForCurrentOS()
+        => CurrentOS switch {
+            OperatingSystem.Windows => new SystemDefaultWindowsLocator(),
+            OperatingSystem.Linux => new SystemDefaultLinuxLocator(),
+            OperatingSystem.OSX => new SystemDefaultMacLocator(),
             _ => throw new PlatformNotSupportedException()
         };
 

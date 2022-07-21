@@ -3,13 +3,13 @@ using System.IO.Abstractions;
 
 namespace FFmpeg.Loader.Locators;
 
-internal class DefaultWindowsLocator : CustomWindowsLocator
+internal class AppDefaultWindowsLocator : CustomWindowsLocator
 {
-    public DefaultWindowsLocator(string rootDir)
+    public AppDefaultWindowsLocator(string rootDir)
         : base(rootDir, DefaultPaths) { }
 
 
-    public DefaultWindowsLocator(IFileSystem fileSystem, string rootDir)
+    public AppDefaultWindowsLocator(IFileSystem fileSystem, string rootDir)
         : base(fileSystem, rootDir, DefaultPaths) { }
 
 
