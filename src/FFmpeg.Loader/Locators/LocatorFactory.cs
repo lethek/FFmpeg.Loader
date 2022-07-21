@@ -7,7 +7,7 @@ namespace FFmpeg.Loader.Locators;
 
 internal static class LocatorFactory
 {
-    internal static readonly OperatingSystem CurrentOS = GetCurrentOS();
+    internal static readonly OperatingSystem CurrentOS = PlatformInformation.GetCurrentOS();
 
 
     internal static BaseLocator CreateCustomForCurrentOS(string rootDir, IEnumerable<string> searchPaths)
@@ -35,15 +35,6 @@ internal static class LocatorFactory
             OperatingSystem.OSX => new SystemDefaultMacLocator(),
             _ => throw new PlatformNotSupportedException()
         };
-
-
-    private static OperatingSystem GetCurrentOS()
-    {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return OperatingSystem.Windows;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return OperatingSystem.Linux;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) return OperatingSystem.OSX;
-        return OperatingSystem.Other;
-    }
 
 
     private static bool StringHasValue(string str)

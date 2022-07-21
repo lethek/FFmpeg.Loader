@@ -1,8 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel;
+using System.IO;
 using System.IO.Abstractions;
+using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using FFmpeg.AutoGen;
 using FFmpeg.Loader.Locators;
@@ -67,6 +75,39 @@ public record FFmpegLoaderSearch
         };
 
 
+    public FFmpegLoaderSearch DownloadIfMissing(string dstDir, string target = null, string version = null, string license = License.LGPL)
+    {
+        if (target == null) {
+            var platform = PlatformInformation.GetCurrentOS() switch {
+                OperatingSystem.Windows => "win",
+                OperatingSystem.Linux => "linux",
+                OperatingSystem.OSX => throw new NotImplementedException(),
+                _ => throw new PlatformNotSupportedException()
+            };
+            var architecture = RuntimeInformation.OSArchitecture switch {
+                Architecture.X64 => "64",
+                Architecture.X86 => "32",
+                Architecture.Arm64 => "arm64",
+                _ => throw new PlatformNotSupportedException()
+            };
+            target = platform + architecture;
+        }
+
+        version ??= ffmpeg.LibraryVersionMap["avcodec"] switch {
+            58 => "4.4",
+            59 => "5.0",
+            _ => "5.0"
+        };
+
+        string ext = target.StartsWith("win", StringComparison.OrdinalIgnoreCase) ? "zip" : "tar.xz";
+
+        return this with {
+            DownloadFrom = $"https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-n{version}-latest-{target}-{license}-shared-{version}.{ext}",
+            DownloadTo = dstDir
+        };
+    }
+
+
     /// <summary>
     /// Locates a specific FFmpeg library with a specific version.
     /// </summary>
@@ -86,6 +127,53 @@ public record FFmpegLoaderSearch
     /// <returns>An IFileInfo object representing the located library or <see langword="null" /> if none are found.</returns>
     public IFileInfo Find(string name)
         => Find(name, ffmpeg.LibraryVersionMap[name]);
+
+
+
+    /// <summary>
+    /// Search the defined search-locations for FFmpeg libraries and set FFmpeg.AutoGen to load from there.
+    /// </summary>
+    /// <param name="name">Name of the FFmpeg library (e.g. avutil, avcodec, swresample, etc.)</param>
+    /// <param name="version">The version of the library (e.g. 56)</param>
+    /// <returns>FFmpeg's reported version number string.</returns>
+    /// <exception cref="DllNotFoundException">Thrown if the required FFmpeg library could not be found in any of the specified search-locations.</exception>
+    public async Task<string> LoadAsync(string name, int version)
+    {
+        var lib = Find(name, version);
+        if (lib == null) {
+            if (DownloadFrom == null) {
+                throw new DllNotFoundException();
+            } else {
+                if (DownloadFrom.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) {
+                    using var client = new HttpClient();
+                    using var stream = await client.GetStreamAsync(DownloadFrom);
+                    using var archive = new ZipArchive(stream, ZipArchiveMode.Read, false);
+                    var entries = archive.Entries.Where(x => FFmpegDownloadBinaries.IsMatch(x.FullName));
+                    Directory.CreateDirectory(DownloadTo);
+                    foreach (var entry in entries) {
+                        entry.ExtractToFile(Path.Combine(DownloadTo, entry.Name));
+                    }
+
+                } else if (DownloadFrom.EndsWith(".tar.xz", StringComparison.OrdinalIgnoreCase)) {
+                    throw new NotImplementedException();
+
+                } else {
+                    throw new NotSupportedException("Unsupported archive format");
+                }
+
+                var locator = LocatorFactory.CreateCustomForCurrentOS(DownloadTo, new[] { "bin" });
+                lib = locator.FindFFmpegLibrary(name, version) ?? throw new DllNotFoundException();
+            }
+        }
+        var dir = lib.DirectoryName;
+
+        if (LocatorFactory.CurrentOS == OperatingSystem.Windows) {
+            NativeHelper.SetDllDirectory(dir);
+        }
+
+        ffmpeg.RootPath = dir;
+        return ffmpeg.av_version_info();
+    }
 
 
     /// <summary>
@@ -122,4 +210,9 @@ public record FFmpegLoaderSearch
 
 
     private ImmutableList<BaseLocator> Locators { get; init; } = ImmutableList<BaseLocator>.Empty;
+    private string DownloadFrom { get; init; }
+    private string DownloadTo { get; init; }
+
+
+    private static readonly Regex FFmpegDownloadBinaries = new(@"/bin/\w+-\d+\.dll$", RegexOptions.Compiled);
 }
