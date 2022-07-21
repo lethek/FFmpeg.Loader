@@ -39,11 +39,16 @@ See the code samples below for basic usage of FFmpegLoader.
 
 The search is only performed when `Load()` or `Find()` are called. The Load method throws `DllNotFoundException` if it can't find the libraries. And the Find method returns `null` if it can't find them.
 
-The *default* paths that FFmpegLoader searches for FFmpeg libraries are the assembly's directory in your executing application, and also several specific subdirectories relative to that, dependent on the current OS and architecture. Aside from the assembly directory, the subdirectories searched match the location that FFmpeg.Native installs to, i.e.:
+The default application paths that FFmpegLoader searches for FFmpeg libraries are the assembly's directory in your executing application, and also several specific subdirectories relative to that, dependent on the current OS and architecture. Aside from the assembly directory, the subdirectories searched match the location that FFmpeg.Native installs to, i.e.:
 * .\runtimes\win7-x64\native\{name}-{version}.dll
 * .\runtimes\win7-x86\native\{name}-{version}.dll
 * ./runtimes/linux-x64/native/lib{name}.so.{version}
 * ./runtimes/osx-x64/native/lib{name}.{version}.dylib
+
+The default system paths that FFmpegLoader searches for FFmpeg libraries depend on the current OS.
+* On Linux systems this will search: /usr/lib/x86_64-linux-gnu, /usr/lib/aarch64-linux-gnu and /usr/lib
+* On Mac OSX systems this will search: /usr/local/lib
+* On Windows systems this won't search anything because there is no default install location.
 
 ```csharp
 using FFmpeg.Loader;
@@ -51,32 +56,36 @@ using FFmpeg.Loader;
 
 ```csharp
 //Search a set of default paths for FFmpeg libraries, relative to the FFmpeg.Loader assembly and then load the first matching binaries with FFmpeg.AutoGen.
-FFmpegLoader.SearchDefaults().Load();
+FFmpegLoader.SearchApplication().Load();
 
-//Search the system's environment PATH for FFmpeg libraries.
+//Search a set of default system paths for the FFmpeg libaries and then load the first matching binaries.
+FFmpegLoader.SearchSystem().Load();
+
+//Search the system's environment PATH for FFmpeg libraries and then load the first matching binaries.
 FFmpegLoader.SearchEnvironmentPaths().Load();
 
-//Search a set of paths for FFmpeg libraries, and then load the first matching binaries with FFmpeg.AutoGen.
+//Search a set of specified paths for FFmpeg libraries and then load the first matching binaries.
 FFmpegLoader.SearchPaths("/usr/lib/x86_64-linux-gnu", "/usr/bin/ffmpeg").Load();
 
 //Calls can be chained and searches are conducted in a fallback sequence. When the 1st match is found, no further searching is done.
 FFmpegLoader
-	.SearchDefaults()
+	.SearchApplication()
 	.ThenSearchEnvironmentPaths()
 	.ThenSearchPaths("/usr/bin/ffmpeg")
+	.ThenSearchSystem()
 	.Load();
 
 //The following two examples are functionally identical and combine both of the approaches above.
 //They first search a default set of paths relative to the FFmpeg.Loader assembly, and then search a list of manually specified paths.
 //Finally they set FFmpeg.AutoGen to load the first matching FFmpeg binaries.
-FFmpegLoader.SearchDefaults().ThenSearchPaths("/usr/lib/x86_64-linux-gnu", "/usr/bin/ffmpeg").Load();
-FFmpegLoader.SearchDefaults().ThenSearchPaths("/usr/lib/x86_64-linux-gnu").ThenSearchPaths("/usr/bin/ffmpeg").Load();
+FFmpegLoader.SearchApplication().ThenSearchPaths("/usr/lib/x86_64-linux-gnu", "/usr/bin/ffmpeg").Load();
+FFmpegLoader.SearchApplication().ThenSearchPaths("/usr/lib/x86_64-linux-gnu").ThenSearchPaths("/usr/bin/ffmpeg").Load();
 
 //The following two examples are functionally identical and search the same paths as above, but search the manually specified paths first
 //and then fall back on searching a set of default paths.
 //As above, they finally set FFmpeg.AutoGen to load the first matching FFmpeg binaries.
-FFmpegLoader.SearchPaths("/usr/lib/x86_64-linux-gnu", "/usr/bin/ffmpeg").ThenSearchDefaults().Load();
-FFmpegLoader.SearchPaths("/usr/lib/x86_64-linux-gnu").ThenSearchPaths("/usr/bin/ffmpeg").ThenSearchDefaults().Load();
+FFmpegLoader.SearchPaths("/usr/lib/x86_64-linux-gnu", "/usr/bin/ffmpeg").ThenSearchApplication().Load();
+FFmpegLoader.SearchPaths("/usr/lib/x86_64-linux-gnu").ThenSearchPaths("/usr/bin/ffmpeg").ThenSearchApplication().Load();
 ```
 
 After defining the initial search paths, there are several more methods and overloads you may find useful:
@@ -85,7 +94,7 @@ After defining the initial search paths, there are several more methods and over
 //Returns an instance with additional search-locations. This method can be chained as many times as necessary.
 //Additional locations are a predefined set of defaults relative to the specified rootDir parameter.
 //If rootDir is null then the FFmpegLoader assembly folder is used for resolving relative paths.
-FFmpegLoaderSearch ThenSearchDefaults(string rootDir = null);
+FFmpegLoaderSearch ThenSearchApplication(string rootDir = null);
 
 //Returns an instance with additional search-locations. This method can be chained as many times as necessary.
 //Values provided in searchPaths are expected to be either absolute or relative to the directory containing the FFmpegLoader assembly.

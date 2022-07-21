@@ -13,6 +13,5 @@ internal class SystemDefaultWindowsLocator : CustomWindowsLocator
         : base(fileSystem, rootDir, DefaultPaths) { }
 
 
-    private static readonly string[] DefaultPaths = {
-    };
+    private static readonly string[] DefaultPaths = { };
 }
