@@ -70,8 +70,8 @@ public record FFmpegLoaderSearch
     /// <summary>
     /// Locates a specific FFmpeg library with a specific version.
     /// </summary>
-    /// <param name="name">Name of the FFmpeg library (e.g. avutil, avcodec, swresample, etc.)</param>
-    /// <param name="version">The version of the library (e.g. 56)</param>
+    /// <param name="name">Name of the FFmpeg library (e.g. avutil, avcodec, swresample, etc.).</param>
+    /// <param name="version">The version of the library (e.g. 56).</param>
     /// <returns>An IFileInfo object representing the located library or <see langword="null" /> if none are found.</returns>
     public IFileInfo Find(string name, int version)
         => Locators
@@ -82,17 +82,17 @@ public record FFmpegLoaderSearch
     /// <summary>
     /// Locates a specific FFmpeg library with a version number provided by FFmpeg.AutoGen.
     /// </summary>
-    /// <param name="name">Name of the FFmpeg library (e.g. avutil, avcodec, swresample, etc.)</param>
+    /// <param name="name">Name of the FFmpeg library (e.g. avutil, avcodec, swresample, etc.).</param>
     /// <returns>An IFileInfo object representing the located library or <see langword="null" /> if none are found.</returns>
     public IFileInfo Find(string name)
         => Find(name, ffmpeg.LibraryVersionMap[name]);
 
 
     /// <summary>
-    /// Search the defined search-locations for FFmpeg libraries and set FFmpeg.AutoGen to load from there.
+    /// Search the defined search-locations for FFmpeg libraries and set FFmpeg.AutoGen to load from there. Once a matching library is found, all required FFmpeg libraries from its directory will be loaded.
     /// </summary>
-    /// <param name="name">Name of the FFmpeg library (e.g. avutil, avcodec, swresample, etc.)</param>
-    /// <param name="version">The version of the library (e.g. 56)</param>
+    /// <param name="name">Name of the FFmpeg library (e.g. avutil, avcodec, swresample, etc.).</param>
+    /// <param name="version">The version of the library (e.g. 56).</param>
     /// <returns>FFmpeg's reported version number string.</returns>
     /// <exception cref="DllNotFoundException">Thrown if the required FFmpeg library could not be found in any of the specified search-locations.</exception>
     public string Load(string name, int version)
@@ -110,8 +110,8 @@ public record FFmpegLoaderSearch
 
 
     /// <summary>
-    /// Search the defined search-locations for FFmpeg libraries and set FFmpeg.AutoGen to load from there. FFmpeg.AutoGen is queried for supported library version
-    /// numbers and only a library with a matching version will be loaded.
+    /// Search the defined search-locations for FFmpeg libraries and set FFmpeg.AutoGen to load from there. FFmpeg.AutoGen is queried for supported library version numbers and only a supported FFmpeg version will be matched.
+    /// Once a matching library is found, all required FFmpeg libraries from its directory will be loaded.
     /// </summary>
     /// <param name="name">Name of an FFmpeg library to locate. If not provided, the default is "avutil". Valid values are: avcodec, avdevice, avfilter, avformat, avutil, postproc, swresample, swscale.</param>
     /// <returns>FFmpeg's reported version number string.</returns>

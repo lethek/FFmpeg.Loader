@@ -41,6 +41,8 @@ See the [Code Samples](#code-samples) below for basic usage of FFmpegLoader.
 
 The search is only performed when `Load()` or `Find()` are called. The Load method throws `DllNotFoundException` if it can't find the libraries. And the Find method returns `null` if it can't find them.
 
+There is no need to call any Load method more than once (e.g. for multiple individual library files): FFmpeg.AutoGen will use *all* the necessary FFmpeg library files from the same located directory when you attempt to use them.
+
 The default application paths that `SearchApplication()` searches are the assembly's directory in your executing application, and also several specific subdirectories relative to that, dependent on the current OS and architecture. Aside from the assembly directory, these subdirectories searched match the location that FFmpeg.Native installs to, i.e.:
 * On Linux (x64): **./runtimes/linux-x64/native/lib{name}.so.{version}**
 * On Mac OS-X (x64): **./runtimes/osx-x64/native/lib{name}.{version}.dylib**
@@ -113,12 +115,14 @@ IFileInfo Find(string name, int version);
 //Locates a specific FFmpeg library with a version number provided by FFmpeg.AutoGen, but does not load it. Returns null if no matching library is found.
 IFileInfo Find(string name);
 
-//Search the defined search-locations for an FFmpeg library with a specific name and version and loads it with FFmpeg.AutoGen.
+//Search the defined search-locations for an FFmpeg library with a specific name and version and loads its directory with FFmpeg.AutoGen.
+//If a matching library file was found, FFmpegLoader assumes that all other library files you require are also present in the same directory.
 //Returns FFmpeg's self-reported version string (e.g. "4.4.2-0ubuntu0.22.04.1").
 //Throws DllNotFoundException if no matching library is found.
 string Load(string name, int version);
 
-//Search the defined search-locations for an FFmpeg library with a specific name (version provided by FFmpeg.AutoGen) and loads it with FFmpeg.AutoGen.
+//Search the defined search-locations for an FFmpeg library with a specific name (version provided by FFmpeg.AutoGen) and loads its directory with FFmpeg.AutoGen.
+//If a matching library file was found, FFmpegLoader assumes that all other library files you require are also present in the same directory.
 //Returns FFmpeg's self-reported version string (e.g. "4.4.2-0ubuntu0.22.04.1").
 //Throws DllNotFoundException if no matching library is found.
 string Load(string name = "avutil");
