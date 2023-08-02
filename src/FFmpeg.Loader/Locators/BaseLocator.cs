@@ -25,7 +25,7 @@ internal abstract class BaseLocator
     protected IFileInfo SearchPathsForFile(string fileName, IEnumerable<string> relativePaths)
     {
         foreach (var relativePath in relativePaths) {
-            var fi = FileSystem.FileInfo.FromFileName(FileSystem.Path.Combine(RootDir, relativePath, fileName));
+            var fi = FileSystem.FileInfo.New(FileSystem.Path.Combine(RootDir, relativePath, fileName));
             if (fi.Exists) {
                 return fi;
             }
