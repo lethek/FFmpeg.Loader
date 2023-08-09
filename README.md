@@ -1,12 +1,12 @@
 # FFmpeg.Loader
 
-[![GitHub license](https://img.shields.io/github/license/lethek/FFmpeg.Loader)](https://github.com/lethek/FFmpeg.Loader/blob/main/LICENSE)
 [![NuGet Stats](https://img.shields.io/nuget/v/FFmpeg.Loader.svg)](https://www.nuget.org/packages/FFmpeg.Loader)
 [![Build & Publish](https://github.com/lethek/FFmpeg.Loader/actions/workflows/dotnet.yml/badge.svg)](https://github.com/lethek/FFmpeg.Loader/actions/workflows/dotnet.yml)
+[![GitHub license](https://img.shields.io/github/license/lethek/FFmpeg.Loader)](https://github.com/lethek/FFmpeg.Loader/blob/main/LICENSE)
 
-FFmpegLoader will find and load FFmpeg libaries with the [FFmpeg.AutoGen](https://github.com/Ruslan-B/FFmpeg.AutoGen) bindings. It's goal is to provide a simple and customizable way of doing this, cross-platform.
+FFmpegLoader will find and load FFmpeg libraries with the [FFmpeg.AutoGen](https://github.com/Ruslan-B/FFmpeg.AutoGen) bindings. It's goal is to provide a simple and customizable way of doing this, cross-platform.
 
-This library was designed for use with [FFmpeg.Native](https://github.com/quamotion/ffmpeg-win32) as a more flexible alternative to FFmpeg.Native's tooling for finding FFmpeg libs. However please note, FFmpeg.Native is unnecessary if FFmpeg libraries have been installed elsewhere (it's just a convenient method of distributing the binaries with your application): just point this project's FFmpegLoader at the appropriate directory if it can't find the binaries on its own.
+This library was originally designed for use with [FFmpeg.Native](https://github.com/quamotion/ffmpeg-win32) as a more flexible alternative to FFmpeg.Native's tooling for finding FFmpeg libs. However please note, FFmpeg.Native is unnecessary if FFmpeg libraries have been installed elsewhere (it's just a convenient method of distributing the binaries with your application): just point this project's FFmpegLoader at the appropriate directory if it can't find the binaries on its own.
 
 # Features
 
@@ -61,19 +61,23 @@ using FFmpeg.Loader;
 ```
 
 ```csharp
-//Search a set of default paths for FFmpeg libraries, relative to the FFmpeg.Loader assembly and then load the first matching binaries with FFmpeg.AutoGen.
+//Search a set of default paths for FFmpeg libraries, relative to the FFmpeg.Loader assembly and
+//then load the first matching binaries with FFmpeg.AutoGen.
 FFmpegLoader.SearchApplication().Load();
 
-//Search a set of default system paths for the FFmpeg libaries and then load the first matching binaries.
+//Search a set of default system paths for the FFmpeg libaries and then load the first matching
+//binaries.
 FFmpegLoader.SearchSystem().Load();
 
-//Search the system's environment PATH for FFmpeg libraries and then load the first matching binaries.
+//Search the system's environment PATH for FFmpeg libraries and then load the first matching
+//binaries.
 FFmpegLoader.SearchEnvironmentPaths().Load();
 
 //Search a set of specified paths for FFmpeg libraries and then load the first matching binaries.
 FFmpegLoader.SearchPaths("/home/user/bin/ffmpeg", "/usr/bin/ffmpeg").Load();
 
-//Calls can be chained and searches are conducted in a fallback sequence. When the 1st match is found, no further searching is done.
+//Calls can be chained and searches are conducted in a fallback sequence. When the 1st match is
+//found, no further searching is done.
 FFmpegLoader
 	.SearchApplication()
 	.ThenSearchEnvironmentPaths("FFMPEG_PATH")
@@ -81,7 +85,8 @@ FFmpegLoader
 	.Load();
 
 //The following two examples are functionally identical and combine both of the approaches above.
-//They first search a default set of paths relative to the FFmpeg.Loader assembly, and then search a list of manually specified paths.
+//They first search a default set of paths relative to the FFmpeg.Loader assembly, and then search a
+//list of manually specified paths.
 //Finally they set FFmpeg.AutoGen to load the first matching FFmpeg binaries.
 FFmpegLoader.SearchApplication().ThenSearchPaths(@"c:\ffmpeg", "/usr/bin/ffmpeg").Load();
 FFmpegLoader.SearchApplication().ThenSearchPaths(@"c:\ffmpeg").ThenSearchPaths("/usr/bin/ffmpeg").Load();
@@ -90,39 +95,50 @@ FFmpegLoader.SearchApplication().ThenSearchPaths(@"c:\ffmpeg").ThenSearchPaths("
 After defining the initial search paths, there are several more methods and overloads you may find useful:
 
 ```csharp
-//Returns an instance with additional search-locations. This method can be chained as many times as necessary.
+//Returns an instance with additional search-locations. This method can be chained as many times as 
+//necessary.
 //Additional locations are a predefined set of defaults relative to the specified rootDir parameter.
 //If rootDir is null then the FFmpegLoader assembly folder is used for resolving relative paths.
 FFmpegLoaderSearch ThenSearchApplication(string rootDir = null);
 
-//Returns an instance with additional search-locations. This method can be chained as many times as necessary
-//(not that there's any point using it in your chain more than once).
+//Returns an instance with additional search-locations. This method can be chained as many times as
+//necessary (not that there's any point using it in your chain more than once).
 //Additional locations are a predefined set of defaults specific to the operating system.
 //If rootDir is null then the FFmpegLoader assembly folder is used for resolving relative paths.
 FFmpegLoaderSearch ThenSearchSystem();
 
-//Returns an instance with additional search-locations. This method can be chained as many times as necessary.
-//Values provided in searchPaths are expected to be either absolute or relative to the directory containing the FFmpegLoader assembly.
+//Returns an instance with additional search-locations. This method can be chained as many times as
+//necessary.
+//Values provided in searchPaths are expected to be either absolute or relative to the directory
+//containing the FFmpegLoader assembly.
 FFmpegLoaderSearch ThenSearchPaths(params string[] searchPaths);
 
-//Returns an instance with additional search-locations. This method can be chained as many times as necessary.
-//Paths are read from the specified envVar; the appropriate PATH separator for each OS is recognized and handled (":" on Linux & OSX, ";" on Windows).
+//Returns an instance with additional search-locations. This method can be chained as many times as
+//necessary.
+//Paths are read from the specified envVar; the appropriate PATH separator for each OS is recognized
+//and handled (":" on Linux & OSX, ";" on Windows).
 FFmpegLoaderSearch ThenSearchEnvironmentPaths(string envVar = "PATH");
 
-//Locates a specific FFmpeg library with a specific version, but does not load it. Returns null if no matching library is found.
+//Locates a specific FFmpeg library with a specific version, but does not load it. Returns null if
+//no matching library is found.
 IFileInfo Find(string name, int version);
 
-//Locates a specific FFmpeg library with a version number provided by FFmpeg.AutoGen, but does not load it. Returns null if no matching library is found.
+//Locates a specific FFmpeg library with a version number provided by FFmpeg.AutoGen, but does not
+//load it. Returns null if no matching library is found.
 IFileInfo Find(string name);
 
-//Search the defined search-locations for an FFmpeg library with a specific name and version and loads its directory with FFmpeg.AutoGen.
-//If a matching library file was found, FFmpegLoader assumes that all other library files you require are also present in the same directory.
+//Search the defined search-locations for an FFmpeg library with a specific name and version and
+//loads its directory with FFmpeg.AutoGen.
+//If a matching library file was found, FFmpegLoader assumes that all other library files you
+//require are also present in the same directory.
 //Returns FFmpeg's self-reported version string (e.g. "4.4.2-0ubuntu0.22.04.1").
 //Throws DllNotFoundException if no matching library is found.
 string Load(string name, int version);
 
-//Search the defined search-locations for an FFmpeg library with a specific name (version provided by FFmpeg.AutoGen) and loads its directory with FFmpeg.AutoGen.
-//If a matching library file was found, FFmpegLoader assumes that all other library files you require are also present in the same directory.
+//Search the defined search-locations for an FFmpeg library with a specific name (version provided
+//by FFmpeg.AutoGen) and loads its directory with FFmpeg.AutoGen.
+//If a matching library file was found, FFmpegLoader assumes that all other library files you
+//require are also present in the same directory.
 //Returns FFmpeg's self-reported version string (e.g. "4.4.2-0ubuntu0.22.04.1").
 //Throws DllNotFoundException if no matching library is found.
 string Load(string name = "avutil");
