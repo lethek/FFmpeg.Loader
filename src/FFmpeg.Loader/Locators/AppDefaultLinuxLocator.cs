@@ -4,11 +4,11 @@ namespace FFmpeg.Loader.Locators;
 
 internal class AppDefaultLinuxLocator : CustomLinuxLocator
 {
-    public AppDefaultLinuxLocator(string rootDir)
+    public AppDefaultLinuxLocator(string? rootDir)
         : base(rootDir, DefaultPaths) { }
 
 
-    public AppDefaultLinuxLocator(IFileSystem fileSystem, string rootDir)
+    public AppDefaultLinuxLocator(IFileSystem fileSystem, string? rootDir)
         : base(fileSystem, rootDir, DefaultPaths) { }
 
 

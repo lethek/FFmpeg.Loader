@@ -6,7 +6,7 @@ namespace FFmpeg.Loader;
 internal static class NativeHelper
 {
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    internal static extern int SetDllDirectory(string dir);
+    internal static extern int SetDllDirectory(string? dir);
 
 
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]

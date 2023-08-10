@@ -1,19 +1,18 @@
-﻿using System.Collections.Generic;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 
 namespace FFmpeg.Loader.Locators;
 
 internal class CustomWindowsLocator : BaseLocator
 {
-    public CustomWindowsLocator(string rootDir, IEnumerable<string> paths) : base(rootDir)
+    public CustomWindowsLocator(string? rootDir, IEnumerable<string> paths) : base(rootDir)
         => Paths = new List<string>(FlattenPathList(paths));
 
 
-    public CustomWindowsLocator(IFileSystem fileSystem, string rootDir, IEnumerable<string> paths) : base(fileSystem, rootDir)
+    public CustomWindowsLocator(IFileSystem fileSystem, string? rootDir, IEnumerable<string> paths) : base(fileSystem, rootDir)
         => Paths = new List<string>(FlattenPathList(paths));
 
 
-    public override IFileInfo FindFFmpegLibrary(string name, int version)
+    public override IFileInfo? FindFFmpegLibrary(string name, int version)
         => SearchPathsForFile($"{name}-{version}.dll", Paths);
 
 

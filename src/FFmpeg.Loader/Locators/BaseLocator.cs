@@ -1,28 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Abstractions;
-using System.Linq;
+﻿using System.IO.Abstractions;
 using System.Reflection;
 
 namespace FFmpeg.Loader.Locators;
 
 internal abstract class BaseLocator
 {
-    protected BaseLocator(string rootDir)
+    protected BaseLocator(string? rootDir)
         : this(new FileSystem(), rootDir) { }
 
 
-    protected BaseLocator(IFileSystem fileSystem, string rootDir)
+    protected BaseLocator(IFileSystem fileSystem, string? rootDir)
     {
         FileSystem = fileSystem;
-        RootDir = rootDir ?? FileSystem.Path.GetDirectoryName(AssemblyLocation);
+        RootDir = rootDir ?? FileSystem.Path.GetDirectoryName(AssemblyLocation)!;
     }
 
 
-    public abstract IFileInfo FindFFmpegLibrary(string name, int version);
+    public abstract IFileInfo? FindFFmpegLibrary(string name, int version);
 
 
-    protected IFileInfo SearchPathsForFile(string fileName, IEnumerable<string> relativePaths)
+    protected IFileInfo? SearchPathsForFile(string fileName, IEnumerable<string> relativePaths)
     {
         foreach (var relativePath in relativePaths) {
             var fi = FileSystem.FileInfo.New(FileSystem.Path.Combine(RootDir, relativePath, fileName));

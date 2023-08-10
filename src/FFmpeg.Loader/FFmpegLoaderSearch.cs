@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.IO.Abstractions;
-using System.Linq;
 
 using FFmpeg.AutoGen;
 using FFmpeg.Loader.Locators;
 
 namespace FFmpeg.Loader;
 
+/// <summary>
+/// Provides a Fluent Builder API for configuring the search-locations for FFmpeg shared libraries, for executing a search over
+/// those locations, and for loading the first matching set of FFmpeg libraries.
+/// </summary>
 public record FFmpegLoaderSearch
 {
     internal FFmpegLoaderSearch(IEnumerable<BaseLocator> locators)
@@ -23,7 +24,7 @@ public record FFmpegLoaderSearch
     /// If <see langword="null" /> then the directory which contains th FFmpegLoader assembly is used.</param>
     /// <returns>A new instance of <see cref="FFmpegLoaderSearch"/> with the additional search-locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
-    public FFmpegLoaderSearch ThenSearchApplication(string rootDir = null)
+    public FFmpegLoaderSearch ThenSearchApplication(string? rootDir = null)
         => this with {
             Locators = Locators.Add(LocatorFactory.CreateAppDefaultForCurrentOS(rootDir))
         };
@@ -73,7 +74,7 @@ public record FFmpegLoaderSearch
     /// <param name="name">Name of the FFmpeg library (e.g. avutil, avcodec, swresample, etc.).</param>
     /// <param name="version">The version of the library (e.g. 56).</param>
     /// <returns>An IFileInfo object representing the located library or <see langword="null" /> if none are found.</returns>
-    public IFileInfo Find(string name, int version)
+    public IFileInfo? Find(string name, int version)
         => Locators
             .Select(x => x.FindFFmpegLibrary(name, version))
             .FirstOrDefault(x => x != null);
@@ -84,7 +85,7 @@ public record FFmpegLoaderSearch
     /// </summary>
     /// <param name="name">Name of the FFmpeg library (e.g. avutil, avcodec, swresample, etc.).</param>
     /// <returns>An IFileInfo object representing the located library or <see langword="null" /> if none are found.</returns>
-    public IFileInfo Find(string name)
+    public IFileInfo? Find(string name)
         => Find(name, ffmpeg.LibraryVersionMap[name]);
 
 

@@ -1,10 +1,11 @@
-﻿using System;
-
-using FFmpeg.Loader.Locators;
+﻿using FFmpeg.Loader.Locators;
 
 
 namespace FFmpeg.Loader;
 
+/// <summary>
+/// FFmpegLoader is your entry-point to start configuring search-locations for FFmpeg shared libraries, using a Fluent Builder API.
+/// </summary>
 public static class FFmpegLoader
 {
     /// <summary>
@@ -18,7 +19,7 @@ public static class FFmpegLoader
     /// <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see> or <see cref="FFmpegLoaderSearch.ThenSearchEnvironmentPaths">ThenSearchEnvironmentPaths</see>
     /// on that to add additional search locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
-    public static FFmpegLoaderSearch SearchApplication(string rootDir = null)
+    public static FFmpegLoaderSearch SearchApplication(string? rootDir = null)
         => new(new[] {
             LocatorFactory.CreateAppDefaultForCurrentOS(rootDir)
         });
@@ -48,7 +49,7 @@ public static class FFmpegLoader
     /// <see cref="FFmpegLoaderSearch.ThenSearchPaths">ThenSearchPaths</see> or <see cref="FFmpegLoaderSearch.ThenSearchEnvironmentPaths">ThenSearchEnvironmentPaths</see>
     /// on that to add additional search locations.</returns>
     /// <exception cref="PlatformNotSupportedException">Thrown if using an unsupported operating system, i.e. anything other than Windows, Linux or Mac OSX.</exception>
-    public static FFmpegLoaderSearch SearchPaths(params string[] searchPaths)
+    public static FFmpegLoaderSearch SearchPaths(params string?[] searchPaths)
         => new(new[] {
             LocatorFactory.CreateCustomForCurrentOS(null, searchPaths)
         });

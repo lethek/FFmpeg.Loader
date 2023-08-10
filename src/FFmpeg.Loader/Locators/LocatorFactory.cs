@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace FFmpeg.Loader.Locators;
 
@@ -10,16 +7,16 @@ internal static class LocatorFactory
     internal static readonly OperatingSystem CurrentOS = GetCurrentOS();
 
 
-    internal static BaseLocator CreateCustomForCurrentOS(string rootDir, IEnumerable<string> searchPaths)
+    internal static BaseLocator CreateCustomForCurrentOS(string? rootDir, IEnumerable<string?> searchPaths)
         => CurrentOS switch {
-            OperatingSystem.Windows => new CustomWindowsLocator(rootDir, searchPaths.Where(StringHasValue)),
-            OperatingSystem.Linux => new CustomLinuxLocator(rootDir, searchPaths.Where(StringHasValue)),
-            OperatingSystem.OSX => new CustomMacLocator(rootDir, searchPaths.Where(StringHasValue)),
+            OperatingSystem.Windows => new CustomWindowsLocator(rootDir, searchPaths.Where(StringHasValue)!),
+            OperatingSystem.Linux => new CustomLinuxLocator(rootDir, searchPaths.Where(StringHasValue)!),
+            OperatingSystem.OSX => new CustomMacLocator(rootDir, searchPaths.Where(StringHasValue)!),
             _ => throw new PlatformNotSupportedException()
         };
 
 
-    internal static BaseLocator CreateAppDefaultForCurrentOS(string rootDir)
+    internal static BaseLocator CreateAppDefaultForCurrentOS(string? rootDir)
         => CurrentOS switch {
             OperatingSystem.Windows => new AppDefaultWindowsLocator(rootDir),
             OperatingSystem.Linux => new AppDefaultLinuxLocator(rootDir),
@@ -46,6 +43,6 @@ internal static class LocatorFactory
     }
 
 
-    private static bool StringHasValue(string str)
+    private static bool StringHasValue(string? str)
         => !String.IsNullOrEmpty(str);
 }
