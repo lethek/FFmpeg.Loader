@@ -22,13 +22,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "[Solution Items]", "[Soluti
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demos", "demos", "{AED10084-9FE1-4DE4-BF20-0168D3579612}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicSample", "demos\BasicSample\BasicSample.csproj", "{25C7166A-4D2E-4A8F-AA8E-1CB110B35126}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicBundledFFmpeg44Sample", "demos\BasicBundledFFmpeg44Sample\BasicBundledFFmpeg44Sample.csproj", "{25C7166A-4D2E-4A8F-AA8E-1CB110B35126}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerBundledFFmpeg4Sample", "demos\DockerBundledFFmpeg4Sample\DockerBundledFFmpeg4Sample.csproj", "{3F577A88-10E9-4987-8901-58B19A209F37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerBundledFFmpeg44Sample", "demos\DockerBundledFFmpeg44Sample\DockerBundledFFmpeg44Sample.csproj", "{3F577A88-10E9-4987-8901-58B19A209F37}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerExternalFFmpeg4Sample", "demos\DockerExternalFFmpeg4Sample\DockerExternalFFmpeg4Sample.csproj", "{72E53BB1-5013-4FBF-8E78-2DC784305E50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerExternalFFmpeg44Sample", "demos\DockerExternalFFmpeg44Sample\DockerExternalFFmpeg44Sample.csproj", "{72E53BB1-5013-4FBF-8E78-2DC784305E50}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DockerExternalFFmpeg5Sample", "demos\DockerExternalFFmpeg5Sample\DockerExternalFFmpeg5Sample.csproj", "{770F89B7-B545-4BEF-9187-DCD34EB3C3B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerExternalFFmpeg51Sample", "demos\DockerExternalFFmpeg51Sample\DockerExternalFFmpeg51Sample.csproj", "{6CFF0019-B105-4FE2-BF99-49B2741A7D91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,12 +82,12 @@ Global
 		{72E53BB1-5013-4FBF-8E78-2DC784305E50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72E53BB1-5013-4FBF-8E78-2DC784305E50}.Release|x64.ActiveCfg = Release|Any CPU
 		{72E53BB1-5013-4FBF-8E78-2DC784305E50}.Release|x86.ActiveCfg = Release|Any CPU
-		{770F89B7-B545-4BEF-9187-DCD34EB3C3B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{770F89B7-B545-4BEF-9187-DCD34EB3C3B5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{770F89B7-B545-4BEF-9187-DCD34EB3C3B5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{770F89B7-B545-4BEF-9187-DCD34EB3C3B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{770F89B7-B545-4BEF-9187-DCD34EB3C3B5}.Release|x64.ActiveCfg = Release|Any CPU
-		{770F89B7-B545-4BEF-9187-DCD34EB3C3B5}.Release|x86.ActiveCfg = Release|Any CPU
+		{6CFF0019-B105-4FE2-BF99-49B2741A7D91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CFF0019-B105-4FE2-BF99-49B2741A7D91}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6CFF0019-B105-4FE2-BF99-49B2741A7D91}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6CFF0019-B105-4FE2-BF99-49B2741A7D91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CFF0019-B105-4FE2-BF99-49B2741A7D91}.Release|x64.ActiveCfg = Release|Any CPU
+		{6CFF0019-B105-4FE2-BF99-49B2741A7D91}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,7 +98,7 @@ Global
 		{25C7166A-4D2E-4A8F-AA8E-1CB110B35126} = {AED10084-9FE1-4DE4-BF20-0168D3579612}
 		{3F577A88-10E9-4987-8901-58B19A209F37} = {AED10084-9FE1-4DE4-BF20-0168D3579612}
 		{72E53BB1-5013-4FBF-8E78-2DC784305E50} = {AED10084-9FE1-4DE4-BF20-0168D3579612}
-		{770F89B7-B545-4BEF-9187-DCD34EB3C3B5} = {AED10084-9FE1-4DE4-BF20-0168D3579612}
+		{6CFF0019-B105-4FE2-BF99-49B2741A7D91} = {AED10084-9FE1-4DE4-BF20-0168D3579612}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {17DF19F8-3351-4970-98A3-E6117E2E87F4}

@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  dockersample:
+    image: ${DOCKER_REGISTRY-}docker-external-ffmpeg51-sample:dev
+    container_name: docker-external-ffmpeg51-sample
+    build:
+      context: ../..
+      dockerfile: demos/DockerExternalFFmpeg51Sample/Dockerfile
