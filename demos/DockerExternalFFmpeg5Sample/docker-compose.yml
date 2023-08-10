@@ -6,4 +6,4 @@ services:
     container_name: docker-external-ffmpeg5-sample
     build:
       context: ../..
-      dockerfile: samples/DockerExternalFFmpeg5Sample/Dockerfile
+      dockerfile: demos/DockerExternalFFmpeg5Sample/Dockerfile

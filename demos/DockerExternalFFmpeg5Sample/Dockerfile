@@ -11,10 +11,10 @@ RUN apt-get install -y ffmpeg
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["samples/DockerExternalFFmpeg5Sample/DockerExternalFFmpeg5Sample.csproj", "samples/DockerExternalFFmpeg5Sample/"]
-RUN dotnet restore "samples/DockerExternalFFmpeg5Sample/DockerExternalFFmpeg5Sample.csproj"
+COPY ["demos/DockerExternalFFmpeg5Sample/DockerExternalFFmpeg5Sample.csproj", "demos/DockerExternalFFmpeg5Sample/"]
+RUN dotnet restore "demos/DockerExternalFFmpeg5Sample/DockerExternalFFmpeg5Sample.csproj"
 COPY . .
-WORKDIR "/src/samples/DockerExternalFFmpeg5Sample"
+WORKDIR "/src/demos/DockerExternalFFmpeg5Sample"
 RUN dotnet build "DockerExternalFFmpeg5Sample.csproj" -c Release -o /app/build
 
 FROM build AS publish
