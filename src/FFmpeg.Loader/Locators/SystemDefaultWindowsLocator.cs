@@ -13,6 +13,6 @@ internal class SystemDefaultWindowsLocator : CustomWindowsLocator
 
 
     private static readonly string[] DefaultPaths = {
-        @"C:\ffmpeg\bin",
+        @"C:\ffmpeg\bin"
     };
 }

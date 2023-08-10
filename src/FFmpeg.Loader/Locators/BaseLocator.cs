@@ -20,17 +20,9 @@ internal abstract class BaseLocator
 
 
     protected IFileInfo? SearchPathsForFile(string fileName, IEnumerable<string> relativePaths)
-    {
-        foreach (var relativePath in relativePaths) {
-            var fi = FileSystem.FileInfo.New(FileSystem.Path.Combine(RootDir, relativePath, fileName));
-            if (fi.Exists) {
-                return fi;
-            }
-        }
-
-        //Couldn't find the library.
-        return null;
-    }
+        => relativePaths
+            .Select(x => FileSystem.FileInfo.New(FileSystem.Path.Combine(RootDir, x, fileName)))
+            .FirstOrDefault(x => x.Exists);
 
 
     protected IEnumerable<string> FlattenPathList(IEnumerable<string> paths)

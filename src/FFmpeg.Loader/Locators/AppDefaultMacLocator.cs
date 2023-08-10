@@ -14,6 +14,6 @@ internal class AppDefaultMacLocator : CustomMacLocator
 
     private static readonly string[] DefaultPaths = {
         ".",
-        "./runtimes/osx-x64/native",
+        "./runtimes/osx-x64/native"
     };
 }
